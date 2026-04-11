@@ -9,6 +9,7 @@ const sequelize = new Sequelize({
     host: appConfig.host,
     port: Number(appConfig.dbPort),
     dialect: appConfig.dialect,
+    models: [__dirname + "/models/**/*.ts"]
 });
 
 const app = express();
@@ -21,3 +22,22 @@ app.get("/", async (req, res) => {
 
 app.listen(appConfig.port, () => {
 });
+
+// START SERVER
+
+async function start() {
+  try {
+    await sequelize.authenticate();
+    console.log("DB CONNECT");
+
+    const PORT = appConfig.port;
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("DB GA CONNECT:", error);
+  }
+}
+
+start();
