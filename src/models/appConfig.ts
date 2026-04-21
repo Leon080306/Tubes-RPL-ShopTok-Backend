@@ -8,5 +8,5 @@ export const appConfig = {
     host: process.env.DB_HOST || "localhost",
     dbPort: Number(process.env.DB_PORT) || 5432,
     dialect: "postgres" as const,
-    port: process.env.PORT || 3000
+    port: process.env.PORT || 5005 as number
 };

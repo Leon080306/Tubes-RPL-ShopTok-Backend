@@ -57,7 +57,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Categories");
+    await queryInterface.dropTable('Categories', { cascade: true });
     await queryInterface.removeColumn("Products", "category_id");
   }
 };

@@ -23,6 +23,7 @@ import { Users } from "./models/Users"
 import { Vouchers } from "./models/Vouchers"
 import { VouchersUsed } from "./models/VouchersUsed"
 import { Wishlists } from "./models/Wishlists"
+import cors from 'cors'
 
 const sequelize = new Sequelize({
     username: appConfig.username,
@@ -36,12 +37,17 @@ const sequelize = new Sequelize({
 
 const app = express();
 
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}))
+
 app.use(express.json());
 
 
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
-app.use("/voucher",voucherRoutes)
+app.use("/voucher", voucherRoutes)
 
 
 app.get("/", async (req, res) => {
@@ -54,18 +60,18 @@ app.get("/", async (req, res) => {
 // START SERVER
 
 async function start() {
-  try {
-    await sequelize.authenticate();
-    console.log("DB CONNECT");
+    try {
+        await sequelize.authenticate();
+        console.log("DB CONNECT");
 
-    const PORT = appConfig.port;
+        const PORT = appConfig.port;
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error("DB GA CONNECT:", error);
-  }
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error("DB GA CONNECT:", error);
+    }
 }
 
 start();
