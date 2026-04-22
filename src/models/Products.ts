@@ -69,7 +69,10 @@ export class Products extends Model {
     })
     category_id!: string;
 
-    @BelongsTo(() => Categories)
+    @BelongsTo(() => Categories, {
+        foreignKey: "category_id",
+        as: "category",
+    })
     category!: Categories;
 
     @HasMany(() => ProductVariants)
@@ -81,6 +84,9 @@ export class Products extends Model {
     @BelongsToMany(() => Users, () => Likes)
     likedBy!: Users[];
 
-    @HasMany(() => Ratings)
+  @HasMany(() => Ratings, {
+        foreignKey: "product_id",
+        as: "ratings",
+    })
     ratings!: Ratings[];
 }

@@ -74,7 +74,10 @@ export class Shops extends Model {
     })
     status!: "active" | "suspended";
 
-    @BelongsTo(() => Users)
+    @BelongsTo(() => Users, {
+        foreignKey: "owner_id",
+        as: "user",
+    })
     owner!: Users;
 
     @HasMany(() => Products)

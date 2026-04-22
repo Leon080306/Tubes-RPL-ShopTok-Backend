@@ -8,8 +8,7 @@ export class CartController {
     // add to cart
     static async addToCart(req: Request, res: Response) {
         try {
-            const { variant_id, quantity } = req.body
-            const user_id = (req as any).user.id 
+            const { user_id, variant_id, quantity } = req.body
 
             // cek stock
             const variant = await ProductVariants.findByPk(variant_id)
@@ -42,7 +41,7 @@ export class CartController {
                 user_id,
                 variant_id,
                 quantity,
-                is_selected: true
+                is_selected: false
             })
 
             res.status(201).json({

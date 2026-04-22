@@ -57,7 +57,10 @@ export class Ratings extends Model {
     })
     picture!: string;
 
-    @BelongsTo(() => Users)
+    @BelongsTo(() => Users, {
+        foreignKey: "user_id",
+        as: "user",
+    })
     user!: Users;
 
     @BelongsTo(() => Products)

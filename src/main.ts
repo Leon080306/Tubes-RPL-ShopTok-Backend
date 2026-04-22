@@ -9,6 +9,11 @@ import ratingsRoutes from "./routes/ratings.routes";
 import cartRoutes from "./routes/cart.routes"
 import wishlistRoutes from "./routes/wishlist.routes"
 import voucherRoutes from "./routes/voucher.routes"
+import userRoutes from "./routes/user.routes";
+import authRoutes from "./routes/auth.routes";
+import addressRoutes from "./routes/address.routes";
+import chatRouter from "./routes/chat.routes";
+import shopsRoutes from "./routes/shops.routes";
 
 const sequelize = new Sequelize({
     username: appConfig.username,
@@ -33,14 +38,19 @@ app.use(express.json());
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
 app.use("/voucher", voucherRoutes)
+app.use("/user", userRoutes)
+app.use("/auth", authRoutes)
+app.use("/address", addressRoutes)
+app.use("/chats", chatRouter);
+app.use("/products", productsRoutes);
+app.use("/ratings", ratingsRoutes);
+app.use("/shops", shopsRoutes);
 
 
 app.get("/", async (req, res) => {
     res.send("Hello World!");
 });
 
-app.use("/products", productsRoutes);
-app.use("/ratings", ratingsRoutes);
 
 // app.listen(appConfig.port, () => {
 // });

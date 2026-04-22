@@ -5,7 +5,7 @@ const router: Router = Router();
 
 router.get("/", RatingsController.getAll);
 // router.get("/:id", RatingsController.getById);
-// router.post("/", RatingsController.create);
+router.post("/", RatingsController.create);
 // router.put("/:id",  RatingsController.update);
 // router.delete("/:id",  RatingsController.delete);
 
