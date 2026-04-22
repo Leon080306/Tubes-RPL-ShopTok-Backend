@@ -6,16 +6,21 @@ import { appConfig } from "../config/appConfig";
 import cartRoutes from "./routes/cart.routes"
 import wishlistRoutes from "./routes/wishlist.routes"
 import voucherRoutes from "./routes/voucher.routes"
+import addressRoutes from "./routes/address.routes";
+import shopsRoutes from "./routes/shops.routes";
 import userRoutes from "./routes/user.routes"
 import authRoutes from "./routes/auth.routes"
 import adressRoutes from "./routes/address.routes"
 import chatRouter from "./routes/chat.routes";
 import categoryRouter from "./routes/category.routes";
+import productRoutes from "./routes/products.routes";
+import ratingsRoutes from "./routes/ratings.routes";
+import orderRoutes from "./routes/order.routes"
 
 import cors from 'cors'
 import path from "path"
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
     username: appConfig.username,
     password: appConfig.password as string,
     database: appConfig.database,
@@ -44,6 +49,10 @@ app.use("/auth", authRoutes)
 app.use("/address", adressRoutes)
 app.use("/chats", chatRouter);
 app.use("/category", categoryRouter);
+app.use("/products", productRoutes);
+app.use("/ratings", ratingsRoutes);
+app.use("/shops", shopsRoutes);
+app.use("/orders", orderRoutes);
 
 app.get("/", async (req, res) => {
     res.send("Hello World!");

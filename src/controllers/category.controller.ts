@@ -62,12 +62,14 @@ export class CategoryController {
     static async create(req: Request, res: Response) {
         try {
             const { name, parent_id } = req.body;
-
             const file = (req as any).file;
 
-            const imageUrl = file
-                ? `http://localhost:5005/uploads/categories/${file.filename}`
-                : null;
+            let imageUrl = null;
+
+            if (file) {
+                const folder = (req as any).uploadFolder ?? "categories";
+                imageUrl = `http://localhost:5005/uploads/${folder}/${file.filename}`;
+            }
 
             const category = await Categories.create({
                 name,
@@ -97,7 +99,8 @@ export class CategoryController {
             const file = (req as any).file;
 
             if (file) {
-                category.icon = `http://localhost:5005/uploads/categories/${file.filename}`;
+                const folder = (req as any).uploadFolder ?? "categories";
+                category.icon = `http://localhost:5005/uploads/${folder}/${file.filename}`;
             }
 
             if (name) category.name = name;
