@@ -5,22 +5,26 @@ import { Shops } from "../models/Shops";
 import { Users } from "../models/Users";
 
 export class ChatController {
+    // chat.controller.ts — tambahkan dua method ini
 
-    // GET /api/chats — semua session milik user yang login
     static async getSessions(req: Request, res: Response) {
         try {
-            const userId = (req as any).user?.user_id;
+            const { user_id } = req.query; // ← body → query
+
+            if (!user_id) {
+                res.status(400).json({ message: "user_id wajib diisi" });
+                return;
+            }
 
             const chats = await Chats.findAll({
-                where: { user_id: userId },
+                where: { user_id: user_id as string }, // ← cast string
                 include: [
-                    { model: Shops, attributes: ["shop_id", "shop_name"] },
+                    { model: Shops, attributes: ["shop_id", "name"] },
                     { model: Users, attributes: ["role"] },
                 ],
                 order: [["createdAt", "ASC"]],
             });
 
-            // group by shop_id
             const sessionMap = new Map<string, any>();
 
             for (const chat of chats) {
@@ -30,7 +34,7 @@ export class ChatController {
                 if (!sessionMap.has(shopId)) {
                     sessionMap.set(shopId, {
                         shop_id: shopId,
-                        shop_name: shop?.shop_name ?? "Toko",
+                        shop_name: shop?.name ?? "Toko",
                         last_message: "",
                         unread_count: 0,
                         messages: [],
@@ -56,14 +60,13 @@ export class ChatController {
         }
     }
 
-    // GET /api/chats/:shopId — pesan dalam satu session
     static async getMessages(req: Request, res: Response) {
         try {
-            const userId = (req as any).user?.user_id;
+            const { user_id } = req.query; // ← body → query
             const { shopId } = req.params;
 
             const messages = await Chats.findAll({
-                where: { user_id: userId, shop_id: shopId },
+                where: { user_id: user_id as string, shop_id: shopId }, // ← cast string
                 include: [{ model: Users, attributes: ["role"] }],
                 order: [["createdAt", "ASC"]],
             });
@@ -81,14 +84,12 @@ export class ChatController {
         }
     }
 
-    // POST /api/chats — kirim pesan
     static async sendMessage(req: Request, res: Response) {
         try {
-            const userId = (req as any).user?.user_id;
-            const { shop_id, message } = req.body;
+            const { user_id, shop_id, message } = req.body;
 
-            if (!shop_id || !message?.trim()) {
-                res.status(400).json({ message: "shop_id dan message wajib diisi" });
+            if (!user_id || !shop_id || !message?.trim()) {
+                res.status(400).json({ message: "user_id, shop_id, dan message wajib diisi" });
                 return;
             }
 
@@ -98,8 +99,7 @@ export class ChatController {
                 return;
             }
 
-            const chat = await Chats.create({ user_id: userId, shop_id, message });
-
+            const chat = await Chats.create({ user_id, shop_id, message });
             res.status(201).json(chat);
         } catch (error) {
             res.status(500).json({ message: error });

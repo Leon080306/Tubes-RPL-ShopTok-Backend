@@ -92,4 +92,30 @@ export class UserController {
             res.status(500).json({ message: error });
         }
     }
+
+    static async changePassword(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { oldPassword, newPassword } = req.body;
+
+            const user = await Users.findByPk(id as string);
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                res.status(400).json({ message: "Password lama salah" });
+                return;
+            }
+
+            user.password = await bcrypt.hash(newPassword, 10);
+            await user.save();
+
+            res.status(200).json({ message: "Password berhasil diperbarui" });
+        } catch (error) {
+            res.status(500).json({ message: error });
+        }
+    }
 }

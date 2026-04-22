@@ -1,29 +1,19 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import express from "express";
 import { Sequelize } from "sequelize-typescript";
-import { appConfig } from "./models/appConfig";
+import { appConfig } from "../config/appConfig";
 
 import cartRoutes from "./routes/cart.routes"
 import wishlistRoutes from "./routes/wishlist.routes"
 import voucherRoutes from "./routes/voucher.routes"
+import userRoutes from "./routes/user.routes"
+import authRoutes from "./routes/auth.routes"
+import adressRoutes from "./routes/address.routes"
+import chatRouter from "./routes/chat.routes";
+import categoryRouter from "./routes/category.routes";
 
-import { Addresses } from "./models/Addresses"
-import { CartItems } from "./models/CartItems"
-import { Categories } from "./models/Categories"
-import { Chats } from "./models/Chats"
-import { Likes } from "./models/Likes"
-import { Notifications } from "./models/Notifications"
-import { OrderItems } from "./models/OrderItems"
-import { Orders } from "./models/Orders"
-import { Products } from "./models/Products"
-import { ProductVariants } from "./models/ProductVariants"
-import { Ratings } from "./models/Ratings"
-import { Shops } from "./models/Shops"
-import { Users } from "./models/Users"
-import { Vouchers } from "./models/Vouchers"
-import { VouchersUsed } from "./models/VouchersUsed"
-import { Wishlists } from "./models/Wishlists"
 import cors from 'cors'
+import path from "path"
 
 const sequelize = new Sequelize({
     username: appConfig.username,
@@ -32,13 +22,13 @@ const sequelize = new Sequelize({
     host: appConfig.host,
     port: Number(appConfig.dbPort),
     dialect: appConfig.dialect,
-    models: [Addresses, CartItems, Categories, Chats, Likes, Notifications, OrderItems, Orders, Products, ProductVariants, Ratings, Shops, Users, Vouchers, VouchersUsed, Wishlists]
+    models: [path.join(__dirname, "models")]
 });
 
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5173",
     credentials: true
 }))
 
@@ -48,7 +38,11 @@ app.use(express.json());
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
 app.use("/voucher", voucherRoutes)
-
+app.use("/user", userRoutes)
+app.use("/auth", authRoutes)
+app.use("/address", adressRoutes)
+app.use("/chats", chatRouter);
+app.use("/category", categoryRouter);
 
 app.get("/", async (req, res) => {
     res.send("Hello World!");
