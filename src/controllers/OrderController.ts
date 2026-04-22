@@ -7,6 +7,9 @@ import { ProductVariants } from "../models/ProductVariants"
 import { Products } from "../models/Products"
 import { Vouchers } from "../models/Vouchers"
 import { VouchersUsed } from "../models/VouchersUsed"
+import { Addresses } from "../models/Addresses"
+import { Shops } from "../models/Shops"
+import { Users } from "../models/Users"
 
 export class OrderController {
   static async checkout(req: Request, res: Response) {
@@ -49,27 +52,20 @@ export class OrderController {
 
       const createdOrders = []
 
-      // loop tiap shop -> bikin order buat masing" shop
-      // jujur lupa kmrn diskusi logicnya gini ga ya?
       for (const shopId in itemsByShop) {
         const items = itemsByShop[shopId]
-
         if (!items) continue
 
         let shopTotal = 0
-
-        // ngitung total per shop & cek stock
-        if (items) {
-          let shopTotal = 0
-          for (const item of items) {
-            if (item.variant.stock < item.quantity) {
-              throw new Error(`Stok ${item.variant.name} habis`)
-            }
-            shopTotal += Number(item.variant.price) * item.quantity
+        // 1. Hitung total per shop dulu
+        for (const item of items) {
+          if (item.variant.stock < item.quantity) {
+            throw new Error(`Stok ${item.variant.product.name} varian ${item.variant.name} tidak mencukupi`)
           }
+          shopTotal += Number(item.variant.price) * item.quantity
         }
 
-        // logic voucher : diskonnya cuma buat orderan pertama aja
+        // 2. Logic Voucher (Cuma dipotong di orderan shop pertama)
         let finalAmount = shopTotal
         if (voucher_id && createdOrders.length === 0) {
           const voucher = await Vouchers.findByPk(voucher_id)
@@ -78,7 +74,7 @@ export class OrderController {
           }
         }
 
-        // bikin order buat shop tsb
+        // 3. Create Order
         const order = await Orders.create(
           {
             customer_id: customer_id,
@@ -90,7 +86,7 @@ export class OrderController {
           { transaction: t },
         )
 
-        // bikin orderitems & update stock product variant
+        // 4. Create Items & Update Stock
         for (const item of items) {
           await OrderItems.create(
             {
@@ -186,4 +182,142 @@ export class OrderController {
         })
     }
   }
+
+  static async getOrderDetail(req: Request, res: Response) {
+    try {
+        const { order_id } = req.params
+        const customer_id = (req as any).user.id
+
+        const order = await Orders.findOne({
+            where: { order_id, customer_id },
+            include: [
+                {
+                    model: OrderItems,
+                    include: [
+                        {
+                            model: ProductVariants,
+                            include: [{ model: Products }]
+                        }
+                    ]
+                },
+                { model: Addresses },
+            ]
+        })
+
+        if (!order) {
+            return res.status(404).json({ message: "Order tidak ditemukan" })
+        }
+
+        res.json({ data: order })
+    } catch (error: any) {
+        res.status(500).json({ message: error.message })
+    }
+  }
+
+  static async getMyOrders(req: Request, res: Response) {
+    try {
+        const customer_id = (req as any).user.id
+        const { status } = req.query  // optional filter by status
+
+        const whereClause: any = { customer_id }
+        if (status && status !== 'all') {
+            whereClause.status = status
+        }
+
+        const orders = await Orders.findAll({
+            where: whereClause,
+            include: [
+                {
+                    model: OrderItems,
+                    include: [
+                        {
+                            model: ProductVariants,
+                            include: [{ model: Products }]
+                        }
+                    ]
+                },
+                { model: Shops },
+            ],
+            order: [['createdAt', 'DESC']]
+        })
+
+        res.json({ data: orders })
+    } catch (error: any) {
+        res.status(500).json({ message: error.message })
+    }
+  }
+
+  // GET /order/shop/:shop_id — seller lihat semua order masuk ke tokonya
+static async getShopOrders(req: Request, res: Response) {
+    try {
+        const { shop_id } = req.params
+        const seller_id = (req as any).user.id
+        const { status } = req.query
+
+        // Validasi: shop harus milik seller ini
+        const shop = await Shops.findOne({ where: { shop_id, owner_id: seller_id } })
+        if (!shop) {
+            return res.status(403).json({ message: "Bukan toko kamu" })
+        }
+
+        const whereClause: any = { shop_id }
+        if (status && status !== 'all') {
+            whereClause.status = status
+        }
+
+        const orders = await Orders.findAll({
+            where: whereClause,
+            include: [
+                {
+                    model: OrderItems,
+                    include: [
+                        {
+                            model: ProductVariants,
+                            include: [{ model: Products }]
+                        }
+                    ]
+                },
+                { model: Addresses },
+                { model: Users, as: 'customer', attributes: ['first_name', 'last_name', 'email', 'phone_number', 'profile_pic'] }
+            ],
+            order: [['createdAt', 'DESC']]
+        })
+
+        res.json({ data: orders })
+    } catch (error: any) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+// PATCH /order/status/:order_id — seller update status order
+static async updateOrderStatus(req: Request, res: Response) {
+    try {
+        const { order_id } = req.params
+        const { status } = req.body
+        const seller_id = (req as any).user.id
+
+        const ALLOWED_STATUSES = ['pending', 'completed', 'cancelled']
+        if (!ALLOWED_STATUSES.includes(status)) {
+            return res.status(400).json({ message: "Status tidak valid" })
+        }
+
+        // Cari order, pastiin emang order ke toko si seller
+        const order = await Orders.findOne({
+            where: { order_id },
+            include: [{ model: Shops }]
+        })
+
+        if (!order) {
+            return res.status(404).json({ message: "Order tidak ditemukan" })
+        }
+        if (order.shop.owner_id !== seller_id) {
+            return res.status(403).json({ message: "Bukan order toko kamu" })
+        }
+
+        await order.update({ status })
+        res.json({ message: "Status berhasil diupdate", data: order })
+    } catch (error: any) {
+        res.status(500).json({ message: error.message })
+    }
+}
 }
