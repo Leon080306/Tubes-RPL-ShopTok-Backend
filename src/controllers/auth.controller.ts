@@ -59,11 +59,11 @@ export class AuthController {
     static async register(req: Request, res: Response) {
         try {
             console.log(req.body);
-            const { first_name, last_name, email, rawPassword, phone_number } = req.body;
+            const { first_name, last_name, email, rawPassword, phone_number, role } = req.body;
 
             const password = await bcrypt.hash(rawPassword, 10);
 
-            const user = await Users.create({ first_name, last_name, email, password: password, phone_number, role: "customer" });
+            const user = await Users.create({ first_name, last_name, email, password: password, phone_number, role });
             res.status(201).json(user);
         } catch (error) {
             res.status(500).json({ message: error });

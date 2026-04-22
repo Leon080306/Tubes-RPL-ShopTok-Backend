@@ -34,6 +34,7 @@ app.use(cors({
 
 app.use(express.json());
 
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
@@ -47,11 +48,6 @@ app.use("/category", categoryRouter);
 app.get("/", async (req, res) => {
     res.send("Hello World!");
 });
-
-// app.listen(appConfig.port, () => {
-// });
-
-// START SERVER
 
 async function start() {
     try {

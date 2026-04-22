@@ -61,11 +61,17 @@ export class CategoryController {
 
     static async create(req: Request, res: Response) {
         try {
-            const { name, icon, parent_id } = req.body;
+            const { name, parent_id } = req.body;
+
+            const file = (req as any).file;
+
+            const imageUrl = file
+                ? `http://localhost:5005/uploads/categories/${file.filename}`
+                : null;
 
             const category = await Categories.create({
                 name,
-                icon,
+                icon: imageUrl,
                 parent_id: parent_id || null,
             });
 
@@ -78,7 +84,8 @@ export class CategoryController {
     static async update(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { name, icon, parent_id } = req.body;
+            const { name, parent_id } = req.body;
+
 
             const category = await Categories.findByPk(id as string);
 
@@ -87,20 +94,27 @@ export class CategoryController {
                 return;
             }
 
+            const file = (req as any).file;
+
+            if (file) {
+                category.icon = `http://localhost:5005/uploads/categories/${file.filename}`;
+            }
+
             if (name) category.name = name;
-            if (icon) category.icon = icon;
-            if (parent_id !== undefined) category.parent_id = parent_id;
+            if (parent_id !== undefined) {
+                category.parent_id = parent_id === "null" ? null : parent_id;
+            }
 
             await category.save();
 
             res.status(200).json(category);
         } catch (error) {
             res.status(500).json({ message: error });
+            console.log(error);
         }
     }
 
     static async remove(req: Request, res: Response) {
-        1
         try {
             const { id } = req.params;
 
