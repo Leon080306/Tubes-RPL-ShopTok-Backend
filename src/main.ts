@@ -58,19 +58,26 @@ app.get("/", async (req, res) => {
     res.send("Hello World!");
 });
 
-async function start() {
-    try {
-        await sequelize.authenticate();
-        console.log("DB CONNECT");
+const start = async () => {
+    let connected = false;
 
-        const PORT = appConfig.port;
-
-        app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error("DB GA CONNECT:", error);
+    while (!connected) {
+        try {
+            console.log("TRY DB CONNECT...");
+            await sequelize.authenticate();
+            connected = true;
+            console.log("DB CONNECT SUCCESS");
+        } catch (err) {
+            console.log("DB NOT READY, RETRYING IN 3s...");
+            await new Promise(r => setTimeout(r, 3000));
+        }
     }
-}
+
+    const PORT = appConfig.port || 5005;
+
+    app.listen(PORT, () => {
+        console.log(`Server running on ${PORT}`);
+    });
+};
 
 start();

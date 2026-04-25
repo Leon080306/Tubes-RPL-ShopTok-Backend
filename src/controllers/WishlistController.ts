@@ -1,62 +1,75 @@
 import { Request, Response } from "express"
 import { Wishlists } from "../models/Wishlists"
 import { Products } from "../models/Products"
+import { ProductVariants } from "../models/ProductVariants"
 
 export class WishlistController {
-    // add to wishlist
-    // kl blm ada -> di like
-    // kl udh ada -> di unlike
+
+    // ─────────────────────────────
+    // TOGGLE WISHLIST
+    // POST /api/wishlist
+    // ─────────────────────────────
     static async toggleWishlist(req: Request, res: Response) {
         try {
             const { product_id } = req.body
-            const user_id = (req as any).user.id
+            const user_id = (req as any).user.user_id ?? (req as any).user.id
 
-            // cek product ada ga
+            if (!product_id) {
+                return res.status(400).json({ message: "product_id is required" })
+            }
+
             const product = await Products.findByPk(product_id)
             if (!product) {
-                return res.status(404).json({
-                    message: "Produk tidak ditemukan"
-                })
-            } 
+                return res.status(404).json({ message: "Produk tidak ditemukan" })
+            }
+
             const existing = await Wishlists.findOne({
                 where: { user_id, product_id }
             })
 
             if (existing) {
                 await existing.destroy()
-                return res.json({
-                    message: "Produk di-unlike dari wishlist"
-                })
+                return res.status(200).json({ message: "Produk di-unlike dari wishlist" })
             }
 
             await Wishlists.create({ user_id, product_id })
-            res.status(201).json({
-                message: "Produk berhasil di-like ke wishlist"
-            })
+            return res.status(201).json({ message: "Produk berhasil di-like ke wishlist" })
+
         } catch (error: any) {
-            res.status(500).json({
-                message: error.message
-            })
+            console.error("toggleWishlist error:", error)
+            return res.status(500).json({ message: error.message })
         }
     }
 
-    // get all wishlist
+    // ─────────────────────────────
+    // GET WISHLIST
+    // GET /api/wishlist
+    // ─────────────────────────────
     static async getWishlist(req: Request, res: Response) {
         try {
-            const user_id = (req as any).user.id
+            const user_id = (req as any).user.user_id ?? (req as any).user.id
+
             const items = await Wishlists.findAll({
                 where: { user_id },
-                include: [Products]
+                include: [
+                    {
+                        model: Products,
+                        as: "product",
+                        include: [
+                            {
+                                model: ProductVariants,
+                                attributes: ["variant_id", "name", "price", "picture", "stock"],
+                            },
+                        ],
+                    },
+                ],
             })
-            res.json({
-                data: items
-            })
+
+            return res.status(200).json({ data: items })
+
         } catch (error: any) {
-            res.status(500).json({
-                message: error.message
-            })
+            console.error("getWishlist error:", error)
+            return res.status(500).json({ message: error.message })
         }
     }
 }
-
-// masih kurang : dari wishlist bisa di add to cart???

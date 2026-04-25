@@ -47,18 +47,26 @@ export class RatingsController {
   static async create(req: Request, res: Response) {
     try {
       const { user_id, product_id, value, title, description } = req.body;
-      const newRating = await Ratings.create({
+      const file = (req as any).file;
+
+      let imageUrl = null;
+      if (file) {
+        const folder = (req as any).uploadFolder ?? "ratings";
+        imageUrl = `http://localhost:5005/uploads/${folder}/${file.filename}`;
+      }
+
+      const [rating, created] = await Ratings.upsert({
         user_id,
         product_id,
         value,
         title,
         description,
+        picture: imageUrl,
       });
 
-      res.status(201).json(newRating);
+      res.status(created ? 201 : 200).json(rating);
     } catch (error: any) {
-      console.error("🔥 SEQUELIZE ERROR:", error); // WAJIB
-
+      console.error("🔥 SEQUELIZE ERROR:", error);
       res.status(500).json({
         message: "Failed to create rating",
         error: error.message,
