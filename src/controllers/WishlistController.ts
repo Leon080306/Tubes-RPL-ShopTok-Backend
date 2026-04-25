@@ -4,14 +4,19 @@ import { Products } from "../models/Products"
 import { ProductVariants } from "../models/ProductVariants"
 
 export class WishlistController {
-    // add to wishlist
-    // kl blm ada -> di like
-    // kl udh ada -> di unlike
+
+    // ─────────────────────────────
+    // TOGGLE WISHLIST
+    // POST /api/wishlist
+    // ─────────────────────────────
     static async toggleWishlist(req: Request, res: Response) {
         try {
             const { product_id, user_id } = req.body
 
-            // cek product ada ga
+            if (!product_id) {
+                return res.status(400).json({ message: "product_id is required" })
+            }
+
             const product = await Products.findByPk(product_id)
             if (!product) {
                 return res.status(404).json({
@@ -24,21 +29,21 @@ export class WishlistController {
 
             if (existing) {
                 await existing.destroy()
-                return res.json({
-                    message: "Produk di-unlike dari wishlist"
-                })
+                return res.status(200).json({ message: "Produk di-unlike dari wishlist" })
             }
 
             await Wishlists.create({ user_id, product_id })
-            res.status(201).json({
-                message: "Produk berhasil di-like ke wishlist"
-            })
+            return res.status(201).json({ message: "Produk berhasil di-like ke wishlist" })
+
         } catch (error: any) {
             throw error;
         }
     }
 
-    // get all wishlist
+    // ─────────────────────────────
+    // GET WISHLIST
+    // GET /api/wishlist
+    // ─────────────────────────────
     static async getWishlist(req: Request, res: Response) {
         try {
             const user_id = req.query.user_id as string
@@ -57,10 +62,9 @@ export class WishlistController {
                     }
                 ]
             })
+            return res.status(200).json({ data: items })
         } catch (error: any) {
             throw error;
         }
     }
 }
-
-// masih kurang : dari wishlist bisa di add to cart???

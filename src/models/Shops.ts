@@ -34,48 +34,51 @@ export class Shops extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    owner_id!: string;
+    declare owner_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    declare name: string;
 
     @Column({
         type: DataType.TEXT,
         allowNull: true,
     })
-    description!: string;
+    declare description: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    profile_pic!: string;
+    declare profile_pic: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    banner!: string;
+    declare banner: string;
 
     @Default(true)
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,
     })
-    is_approved!: boolean;
+    declare is_approved: boolean;
 
     @Default("active")
     @Column({
         type: DataType.ENUM("active", "suspended"),
         allowNull: false,
     })
-    status!: "active" | "suspended";
+    declare status: "active" | "suspended";
 
-    @BelongsTo(() => Users)
-    owner!: Users;
+    @BelongsTo(() => Users, {
+        foreignKey: "owner_id",
+        as: "user",
+    })
+    declare owner: Users;
 
     @HasMany(() => Products)
     products!: Products[];

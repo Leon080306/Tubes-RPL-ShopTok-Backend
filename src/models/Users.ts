@@ -38,81 +38,87 @@ export class Users extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    first_name!: string;
+    declare first_name: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    last_name!: string;
+    declare last_name: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
         unique: true,
     })
-    email!: string;
+    declare email: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    password!: string;
+    declare password: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    phone_number!: string;
+    declare phone_number: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    profile_pic!: string;
+    declare profile_pic: string;
 
     @Default("customer")
     @Column({
         type: DataType.ENUM("admin", "customer", "seller"),
         allowNull: false,
     })
-    role!: "admin" | "customer" | "seller";
+    declare role: "admin" | "customer" | "seller";
 
     @Default("active")
     @Column({
         type: DataType.ENUM("active", "suspended"),
         allowNull: false,
     })
-    status!: "active" | "suspended";
+    declare status: "active" | "suspended";
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    declare reset_token: string;
+
+    @Column({ type: DataType.DATE, allowNull: true })
+    declare reset_token_expiry: Date;
 
     @ForeignKey(() => Addresses)
     @Column({
         type: DataType.UUID,
         allowNull: true,
     })
-    address_id!: string;
+    declare address_id: string;
 
     @BelongsTo(() => Addresses)
-    addresses!: Addresses;
+    declare addresses: Addresses;
 
     @BelongsToMany(() => Products, () => Wishlists)
-    wishlist!: Products[];
+    declare wishlist: Products[];
 
     @BelongsToMany(() => Products, () => Likes)
-    likedProducts!: Products[];
+    declare likedProducts: Products[];
 
     @HasMany(() => Ratings)
-    ratings!: Ratings[];
+    declare ratings: Ratings[];
 
     @HasMany(() => Chats)
-    chats!: Chats[];
+    declare chats: Chats[];
 
     @HasMany(() => Notifications)
-    notifications!: Notifications[];
+    declare notifications: Notifications[];
 
     @HasMany(() => CartItems)
-    cartItems!: CartItems[];
+    declare cartItems: CartItems[];
 
     @HasMany(() => Orders, "customer_id")
-    orders!: Orders[];
+    declare orders: Orders[];
 }

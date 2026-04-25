@@ -1,32 +1,23 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import express from "express";
 import { Sequelize } from "sequelize-typescript";
-import { appConfig } from "./models/appConfig";
+import { appConfig } from "../config/appConfig";
 
 import cartRoutes from "./routes/cart.routes"
 import wishlistRoutes from "./routes/wishlist.routes"
 import voucherRoutes from "./routes/voucher.routes"
+import shopsRoutes from "./routes/shops.routes";
+import userRoutes from "./routes/user.routes"
+import authRoutes from "./routes/auth.routes"
+import addressRoutes from "./routes/address.routes"
+import chatRouter from "./routes/chat.routes";
+import categoryRouter from "./routes/category.routes";
+import productRoutes from "./routes/products.routes";
+import ratingsRoutes from "./routes/ratings.routes";
 import orderRoutes from "./routes/order.routes"
-import adressRoutes from "./routes/address.routes"
 
 import cors from 'cors'
 import path from "path"
-import { Addresses } from "./models/Addresses";
-import { CartItems } from "./models/CartItems";
-import { Categories } from "./models/Categories";
-import { Chats } from "./models/Chats";
-import { Likes } from "./models/Likes";
-import { OrderItems } from "./models/OrderItems";
-import { Orders } from "./models/Orders";
-import { Products } from "./models/Products";
-import { ProductVariants } from "./models/ProductVariants";
-import { Ratings } from "./models/Ratings";
-import { Shops } from "./models/Shops";
-import { Users } from "./models/Users";
-import { Vouchers } from "./models/Vouchers";
-import { VouchersUsed } from "./models/VouchersUsed";
-import { Wishlists } from "./models/Wishlists";
-import { Notifications } from "./models/Notifications";
 import { loggerMiddleware } from "./middlewares/logger.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
 
@@ -38,13 +29,13 @@ export const sequelize = new Sequelize({
     host: appConfig.host,
     port: Number(appConfig.dbPort),
     dialect: appConfig.dialect,
-    models: [Addresses, CartItems, Categories, Chats, Likes, Notifications, OrderItems, Orders, Products, ProductVariants, Ratings, Shops, Users, Vouchers, VouchersUsed, Wishlists]
+    models: [path.join(__dirname, "models")]
 });
 
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5173",
     credentials: true
 }))
 
@@ -52,31 +43,45 @@ app.use(express.json());
 
 app.use(loggerMiddleware);
 
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
 app.use("/voucher", voucherRoutes)
-app.use("/order", orderRoutes)
-app.use("/address", adressRoutes)
+app.use("/user", userRoutes)
+app.use("/auth", authRoutes)
+app.use("/address", addressRoutes)
+app.use("/chats", chatRouter);
+app.use("/category", categoryRouter);
+app.use("/products", productRoutes);
+app.use("/ratings", ratingsRoutes);
+app.use("/shops", shopsRoutes);
+app.use("/orders", orderRoutes);
 
 app.get("/", async (req, res) => {
     res.send("Hello World!");
 });
 
-app.use(errorMiddleware);
+const start = async () => {
+    let connected = false;
 
-async function start() {
-    try {
-        await sequelize.authenticate();
-        console.log("DB CONNECT");
-
-        const PORT = appConfig.port;
-
-        app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error("DB GA CONNECT:", error);
+    while (!connected) {
+        try {
+            console.log("TRY DB CONNECT...");
+            await sequelize.authenticate();
+            connected = true;
+            console.log("DB CONNECT SUCCESS");
+        } catch (err) {
+            console.log("DB NOT READY, RETRYING IN 3s...");
+            await new Promise(r => setTimeout(r, 3000));
+        }
     }
 }
 
-start();
+app.use(errorMiddleware);
+
+start().then(() => {
+    const PORT = appConfig.port || 5005;
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+});

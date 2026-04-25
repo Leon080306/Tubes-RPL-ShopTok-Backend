@@ -31,20 +31,27 @@ export class Chats extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @ForeignKey(() => Shops)
     @Column({
         type: DataType.UUID,
         allowNull: false,
     })
-    shop_id!: string;
+    declare shop_id: string;
 
+    @Default("customer")
     @Column({
-        type: DataType.STRING,
+        type: DataType.ENUM("customer", "seller"),
         allowNull: false,
     })
-    message!: string;
+    declare sender_role: "customer" | "seller";
+
+    @Column({
+        type: DataType.TEXT,
+        allowNull: false,
+    })
+    declare message: string;
 
     @BelongsTo(() => Users)
     user!: Users;
