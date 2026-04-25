@@ -7,9 +7,26 @@ import cartRoutes from "./routes/cart.routes"
 import wishlistRoutes from "./routes/wishlist.routes"
 import voucherRoutes from "./routes/voucher.routes"
 import orderRoutes from "./routes/order.routes"
+import adressRoutes from "./routes/address.routes"
 
 import cors from 'cors'
 import path from "path"
+import { Addresses } from "./models/Addresses";
+import { CartItems } from "./models/CartItems";
+import { Categories } from "./models/Categories";
+import { Chats } from "./models/Chats";
+import { Likes } from "./models/Likes";
+import { OrderItems } from "./models/OrderItems";
+import { Orders } from "./models/Orders";
+import { Products } from "./models/Products";
+import { ProductVariants } from "./models/ProductVariants";
+import { Ratings } from "./models/Ratings";
+import { Shops } from "./models/Shops";
+import { Users } from "./models/Users";
+import { Vouchers } from "./models/Vouchers";
+import { VouchersUsed } from "./models/VouchersUsed";
+import { Wishlists } from "./models/Wishlists";
+import { Notifications } from "./models/Notifications";
 
 export const sequelize = new Sequelize({
     username: appConfig.username,
@@ -18,7 +35,7 @@ export const sequelize = new Sequelize({
     host: appConfig.host,
     port: Number(appConfig.dbPort),
     dialect: appConfig.dialect,
-    models: [path.join(__dirname, "models")]
+    models: [Addresses, CartItems, Categories, Chats, Likes, Notifications, OrderItems, Orders, Products, ProductVariants, Ratings, Shops, Users, Vouchers, VouchersUsed, Wishlists]
 });
 
 const app = express();
@@ -35,6 +52,7 @@ app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
 app.use("/voucher", voucherRoutes)
 app.use("/order", orderRoutes)
+app.use("/address", adressRoutes)
 
 
 app.get("/", async (req, res) => {

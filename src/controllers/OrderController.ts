@@ -16,8 +16,9 @@ export class OrderController {
     const t = await sequelize.transaction()
 
     try {
-      const customer_id = (req as any).user.id
-      const { address_id, voucher_id } = req.body
+      const { address_id, voucher_id, customer_id } = req.body
+
+      if (!customer_id) return res.status(400).json({ message: "customer_id wajib dikirim" })
 
       if (!address_id) {
         return res.status(400).json({
@@ -138,7 +139,9 @@ export class OrderController {
     const t = await sequelize.transaction()
     try {
       const { order_id } = req.params
-      const customer_id = (req as any).user.id
+      const customer_id = req.query.customer_id as string
+
+      if (!customer_id) return res.status(400).json({ message: "customer_id wajib dikirim" })
 
       const order = await Orders.findOne({
         where: { order_id, customer_id, status: "pending" },
@@ -186,7 +189,9 @@ export class OrderController {
   static async getOrderDetail(req: Request, res: Response) {
     try {
         const { order_id } = req.params
-        const customer_id = (req as any).user.id
+        const customer_id = req.query.customer_id as string
+
+        if (!customer_id) return res.status(400).json({ message: "customer_id wajib dikirim" })
 
         const order = await Orders.findOne({
             where: { order_id, customer_id },
@@ -216,8 +221,10 @@ export class OrderController {
 
   static async getMyOrders(req: Request, res: Response) {
     try {
-        const customer_id = (req as any).user.id
-        const { status } = req.query  // optional filter by status
+        const customer_id = req.query.customer_id as string
+        const { status } = req.query
+
+        if (!customer_id) return res.status(400).json({ message: "customer_id wajib dikirim" })
 
         const whereClause: any = { customer_id }
         if (status && status !== 'all') {
@@ -251,8 +258,10 @@ export class OrderController {
 static async getShopOrders(req: Request, res: Response) {
     try {
         const { shop_id } = req.params
-        const seller_id = (req as any).user.id
+        const seller_id = req.query.seller_id as string
         const { status } = req.query
+
+        if (!seller_id) return res.status(400).json({ message: "seller_id wajib dikirim" })
 
         // Validasi: shop harus milik seller ini
         const shop = await Shops.findOne({ where: { shop_id, owner_id: seller_id } })
@@ -293,8 +302,9 @@ static async getShopOrders(req: Request, res: Response) {
 static async updateOrderStatus(req: Request, res: Response) {
     try {
         const { order_id } = req.params
-        const { status } = req.body
-        const seller_id = (req as any).user.id
+        const { status, seller_id } = req.body
+
+        if (!seller_id) return res.status(400).json({ message: "seller_id wajib dikirim" })
 
         const ALLOWED_STATUSES = ['pending', 'completed', 'cancelled']
         if (!ALLOWED_STATUSES.includes(status)) {
