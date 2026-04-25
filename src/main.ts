@@ -27,8 +27,11 @@ import { Vouchers } from "./models/Vouchers";
 import { VouchersUsed } from "./models/VouchersUsed";
 import { Wishlists } from "./models/Wishlists";
 import { Notifications } from "./models/Notifications";
+import { loggerMiddleware } from "./middlewares/logger.middleware";
+import { errorMiddleware } from "./middlewares/error.middleware";
 
 export const sequelize = new Sequelize({
+    logging: false,
     username: appConfig.username,
     password: appConfig.password as string,
     database: appConfig.database,
@@ -47,6 +50,7 @@ app.use(cors({
 
 app.use(express.json());
 
+app.use(loggerMiddleware);
 
 app.use("/cart", cartRoutes)
 app.use("/wishlist", wishlistRoutes)
@@ -54,15 +58,11 @@ app.use("/voucher", voucherRoutes)
 app.use("/order", orderRoutes)
 app.use("/address", adressRoutes)
 
-
 app.get("/", async (req, res) => {
     res.send("Hello World!");
 });
 
-// app.listen(appConfig.port, () => {
-// });
-
-// START SERVER
+app.use(errorMiddleware);
 
 async function start() {
     try {

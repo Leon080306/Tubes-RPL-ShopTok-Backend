@@ -1,12 +1,13 @@
 import { Router } from "express"
 import { WishlistController } from "../controllers/WishlistController"
+import { asyncHandler } from "../utils/asyncHandler"
 
 const router: Router = Router()
 
 // get all wishlsit
-router.get("/", WishlistController.getWishlist)
+router.get("/", asyncHandler(WishlistController.getWishlist))
 
 // like barang
-router.post("/", WishlistController.toggleWishlist)
+router.post("/", asyncHandler(WishlistController.toggleWishlist))
 
 export default router

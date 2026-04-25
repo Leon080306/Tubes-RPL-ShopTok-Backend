@@ -17,7 +17,7 @@ export class WishlistController {
                 return res.status(404).json({
                     message: "Produk tidak ditemukan"
                 })
-            } 
+            }
             const existing = await Wishlists.findOne({
                 where: { user_id, product_id }
             })
@@ -34,9 +34,7 @@ export class WishlistController {
                 message: "Produk berhasil di-like ke wishlist"
             })
         } catch (error: any) {
-            res.status(500).json({
-                message: error.message
-            })
+            throw error;
         }
     }
 
@@ -45,24 +43,22 @@ export class WishlistController {
         try {
             const user_id = req.query.user_id as string
             const items = await Wishlists.findAll({
-            where: { user_id },
-            include: [
-                {
-                    model: Products,
-                    as: "product",                      
-                    include: [
-                        {
-                            model: ProductVariants,   
-                            as: "variants"
-                        }
-                    ]
-                }
-            ]
-        })
-        } catch (error: any) {
-            res.status(500).json({
-                message: error.message
+                where: { user_id },
+                include: [
+                    {
+                        model: Products,
+                        as: "product",
+                        include: [
+                            {
+                                model: ProductVariants,
+                                as: "variants"
+                            }
+                        ]
+                    }
+                ]
             })
+        } catch (error: any) {
+            throw error;
         }
     }
 }
