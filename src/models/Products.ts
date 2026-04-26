@@ -38,55 +38,55 @@ export class Products extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    shop_id!: string;
+    declare shop_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    declare name: string;
 
     @Column({
         type: DataType.TEXT,
         allowNull: false,
     })
-    description!: string;
+    declare description: string;
 
     @Default(0)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    view_count!: number;
+    declare view_count: number;
 
     @BelongsTo(() => Shops)
-    shop!: Shops;
+    declare shop: Shops;
 
     @ForeignKey(() => Categories)
     @Column({
         type: DataType.UUID,
         allowNull: false,
     })
-    category_id!: string;
+    declare category_id: string;
 
     @BelongsTo(() => Categories, {
         foreignKey: "category_id",
         as: "category",
     })
-    category!: Categories;
+    declare category: Categories;
 
     @HasMany(() => ProductVariants)
-    variants!: ProductVariants[];
+    declare variants: ProductVariants[];
 
     @BelongsToMany(() => Users, () => Wishlists)
-    wishlistedBy!: Users[];
+    declare wishlistedBy: Users[];
 
     @BelongsToMany(() => Users, () => Likes)
-    likedBy!: Users[];
+    declare likedBy: Users[];
 
-  @HasMany(() => Ratings, {
+    @HasMany(() => Ratings, {
         foreignKey: "product_id",
         as: "ratings",
     })
-    ratings!: Ratings[];
+    declare ratings: Ratings[];
 }

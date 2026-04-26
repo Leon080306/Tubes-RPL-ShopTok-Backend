@@ -25,6 +25,16 @@ export class AuthController {
                 return;
             }
 
+            // ─── Suspension check ─────────────────────────────
+            if (user.status === "suspended") {
+                res.status(403).json({
+                    message: "Your account has been suspended. Please contact support for assistance.",
+                    suspended: true,
+                });
+                return;
+            }
+            // ──────────────────────────────────────────────────
+
             res.cookie("user", JSON.stringify({
                 user_id: user.user_id,
                 first_name: user.first_name,
@@ -109,6 +119,7 @@ export class AuthController {
             res.json({ message: "If that email exists, a reset link has been sent." });
         } catch (error) {
             res.status(500).json({ message: error });
+            throw error;
         }
     }
 

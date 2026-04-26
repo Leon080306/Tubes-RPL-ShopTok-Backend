@@ -30,25 +30,25 @@ export class Categories extends Model {
         type: DataType.UUID,
         allowNull: true,
     })
-    parent_id!: string;
+    declare parent_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    declare name: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    icon!: string;
+    declare icon: string;
 
     // Parent Category
     @BelongsTo(() => Categories, "parent_id")
-    parent!: Categories;
+    declare parent: Categories;
 
     // Child Categories
     @HasMany(() => Categories, "parent_id")
-    children!: Categories[];
+    declare children: Categories[];
 }

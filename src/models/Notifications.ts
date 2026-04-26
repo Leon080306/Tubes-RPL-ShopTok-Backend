@@ -30,20 +30,20 @@ export class Notifications extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    subject!: string;
+    declare subject: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    message!: string;
+    declare message: string;
 
     @BelongsTo(() => Users)
-    user!: Users;
+    declare user: Users;
 }

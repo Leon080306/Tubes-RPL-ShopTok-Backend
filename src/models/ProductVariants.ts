@@ -32,40 +32,40 @@ export class ProductVariants extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    product_id!: string;
+    declare product_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    declare name: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    picture!: string;
+    declare picture: string;
 
     @Default(0)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    stock!: number;
+    declare stock: number;
 
     @Default(0)
     @Column({
         type: DataType.DECIMAL(10, 2),
         allowNull: false,
     })
-    price!: number;
+    declare price: number;
 
     @BelongsTo(() => Products)
-    product!: Products;
+    declare product: Products;
 
     @HasMany(() => CartItems)
-    cartItems!: CartItems[];
+    declare cartItems: CartItems[];
 
     @HasMany(() => OrderItems)
-    orderItems!: OrderItems[];
+    declare orderItems: OrderItems[];
 }

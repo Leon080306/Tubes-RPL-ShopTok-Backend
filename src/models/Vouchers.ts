@@ -28,26 +28,26 @@ export class Vouchers extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    name!: string;
+    declare name: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    banner!: string;
+    declare banner: string;
 
     @Column({
         type: DataType.DATE,
         allowNull: false,
     })
-    expiry_date!: Date;
+    declare expiry_date: Date;
 
     @Column({
         type: DataType.DECIMAL(10, 2),
         allowNull: true,
     })
-    discount_value!: number;
+    declare discount_value: number;
 
     @HasMany(() => VouchersUsed)
-    vouchersUsed!: VouchersUsed[];
+    declare vouchersUsed: VouchersUsed[];
 }

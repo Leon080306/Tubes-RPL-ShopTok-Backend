@@ -32,47 +32,47 @@ export class Addresses extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    full_name!: string;
+    declare full_name: string;
 
     @Column({
         type: DataType.TEXT,
         allowNull: false,
     })
-    address!: string;
+    declare address: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    province!: string;
+    declare province: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
-    city!: string;
+    declare city: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    sub_district!: string;
+    declare sub_district: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    phone_number!: string;
+    declare phone_number: string;
 
     @BelongsTo(() => Users)
-    user!: Users;
+    declare user: Users;
 
     @HasMany(() => Orders)
-    orders!: Orders[];
+    declare orders: Orders[];
 }

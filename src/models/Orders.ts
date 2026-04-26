@@ -35,46 +35,48 @@ export class Orders extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    customer_id!: string;
+    declare customer_id: string;      // ← was customer_id:
 
     @ForeignKey(() => Shops)
     @Column({
         type: DataType.UUID,
         allowNull: false,
     })
-    shop_id!: string;
+    declare shop_id: string;          // ← was shop_id:
 
     @ForeignKey(() => Addresses)
     @Column({
         type: DataType.UUID,
         allowNull: false,
     })
-    address_id!: string;
+    declare address_id: string;       // ← was address_id:
 
     @Column({
         type: DataType.ENUM("pending", "completed", "cancelled"),
         allowNull: false,
     })
-    status!: "pending" | "completed" | "cancelled";
+    declare status: "pending" | "completed" | "cancelled";  // ← was status:
 
     @Column({
-        type: DataType.DECIMAL(10, 2),
+        type: DataType.DECIMAL(15, 2),
         allowNull: true,
     })
-    amount_paid!: number;
+    declare amount_paid: number;      // ← was amount_paid:
 
+    // Relationships stay the same
     @BelongsTo(() => Users)
-    customer!: Users;
+    declare customer: Users;                 // ← relationship associations keep : (they're not columns)
 
     @BelongsTo(() => Shops)
-    shop!: Shops;
+    declare shop: Shops;
 
     @BelongsTo(() => Addresses)
-    address!: Addresses;
+    declare address: Addresses;
 
     @HasMany(() => OrderItems)
-    orderItems!: OrderItems[];
+    declare orderItems: OrderItems[];
 
     @HasMany(() => VouchersUsed)
-    vouchersUsed!: VouchersUsed[];
+    declare vouchersUsed: VouchersUsed[];
+
 }

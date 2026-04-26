@@ -24,7 +24,7 @@ export class CartItems extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @PrimaryKey
     @ForeignKey(() => ProductVariants)
@@ -32,25 +32,25 @@ export class CartItems extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    variant_id!: string;
+    declare variant_id: string;
 
     @Default(1)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    quantity!: number;
+    declare quantity: number;
 
     @Default(false)
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,
     })
-    is_selected!: boolean;
+    declare is_selected: boolean;
 
     @BelongsTo(() => Users)
-    user!: Users;
+    declare user: Users;
 
     @BelongsTo(() => ProductVariants)
-    variant!: ProductVariants;
+    declare variant: ProductVariants;
 }

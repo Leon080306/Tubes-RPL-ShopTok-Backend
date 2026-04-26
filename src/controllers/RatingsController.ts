@@ -52,7 +52,7 @@ export class RatingsController {
       let imageUrl = null;
       if (file) {
         const folder = (req as any).uploadFolder ?? "ratings";
-        imageUrl = `http://localhost:5005/uploads/${folder}/${file.filename}`;
+        imageUrl = `uploads/${folder}/${file.filename}`;
       }
 
       const [rating, created] = await Ratings.upsert({

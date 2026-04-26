@@ -24,7 +24,7 @@ export class OrderItems extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    order_id!: string;
+    declare order_id: string;         // ← was order_id:
 
     @PrimaryKey
     @ForeignKey(() => ProductVariants)
@@ -32,18 +32,19 @@ export class OrderItems extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    variant_id!: string;
+    declare variant_id: string;       // ← was variant_id:
 
     @Default(1)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    quantity!: number;
+    declare quantity: number;          // ← was quantity:
 
+    // Relationships keep :
     @BelongsTo(() => Orders)
-    order!: Orders;
+    declare order: Orders;
 
     @BelongsTo(() => ProductVariants)
-    variant!: ProductVariants;
+    declare variant: ProductVariants;
 }

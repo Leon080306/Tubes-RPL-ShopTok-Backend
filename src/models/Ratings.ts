@@ -23,7 +23,7 @@ export class Ratings extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @PrimaryKey
     @ForeignKey(() => Products)
@@ -31,38 +31,38 @@ export class Ratings extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    product_id!: string;
+    declare product_id: string;
 
     @Column({
         type: DataType.DECIMAL(2, 1),
         allowNull: false,
     })
-    value!: number;
+    declare value: number;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    title!: string;
+    declare title: string;
 
     @Column({
         type: DataType.TEXT,
         allowNull: true,
     })
-    description!: string;
+    declare description: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
-    picture!: string;
+    declare picture: string;
 
     @BelongsTo(() => Users, {
         foreignKey: "user_id",
         as: "user",
     })
-    user!: Users;
+    declare user: Users;
 
     @BelongsTo(() => Products)
-    product!: Products;
+    declare product: Products;
 }

@@ -68,7 +68,7 @@ export class CategoryController {
 
             if (file) {
                 const folder = (req as any).uploadFolder ?? "categories";
-                imageUrl = `http://localhost:5005/uploads/${folder}/${file.filename}`;
+                imageUrl = `uploads/${folder}/${file.filename}`;
             }
 
             const category = await Categories.create({
@@ -100,7 +100,7 @@ export class CategoryController {
 
             if (file) {
                 const folder = (req as any).uploadFolder ?? "categories";
-                category.icon = `http://localhost:5005/uploads/${folder}/${file.filename}`;
+                category.icon = `uploads/${folder}/${file.filename}`;
             }
 
             if (name) category.name = name;

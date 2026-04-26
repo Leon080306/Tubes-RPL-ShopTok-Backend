@@ -23,7 +23,7 @@ export class VouchersUsed extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    voucher_id!: string;
+    declare voucher_id: string;
 
     @PrimaryKey
     @ForeignKey(() => Orders)
@@ -31,11 +31,11 @@ export class VouchersUsed extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    order_id!: string;
+    declare order_id: string;
 
     @BelongsTo(() => Vouchers)
-    voucher!: Vouchers;
+    declare voucher: Vouchers;
 
     @BelongsTo(() => Orders)
-    order!: Orders;
+    declare order: Orders;
 }

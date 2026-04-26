@@ -54,8 +54,8 @@ export class Chats extends Model {
     declare message: string;
 
     @BelongsTo(() => Users)
-    user!: Users;
+    declare user: Users;
 
     @BelongsTo(() => Shops)
-    shop!: Shops;
+    declare shop: Shops;
 }

@@ -81,11 +81,11 @@ export class Shops extends Model {
     declare owner: Users;
 
     @HasMany(() => Products)
-    products!: Products[];
+    declare products: Products[];
 
     @HasMany(() => Chats)
-    chats!: Chats[];
+    declare chats: Chats[];
 
     @HasMany(() => Orders)
-    orders!: Orders[];
+    declare orders: Orders[];
 }

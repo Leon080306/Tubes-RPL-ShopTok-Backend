@@ -7,7 +7,7 @@ import { Users } from "../models/Users";
 import { OrderItems } from "../models/OrderItems";
 import { Shops } from "../models/Shops";
 
-const BASE_URL = "http://localhost:5005/uploads/products";
+const BASE_URL = "products";
 
 export class ProductsController {
 
@@ -171,7 +171,7 @@ export class ProductsController {
             name: v.name,
             price: v.price,
             stock: v.stock,
-            picture: files[i] ? `${BASE_URL}/${files[i].filename}` : "",
+            picture: files[i] ? `uploads/${BASE_URL}/${files[i].filename}` : "",
           })
         )
       );
@@ -196,6 +196,10 @@ export class ProductsController {
       const { id } = req.params;
       const { name, description, category_id, variants } = req.body;
 
+      console.log("REQ BODY:", req.body);
+      console.log("category_id received:", category_id);
+      console.log("category_id type:", typeof category_id);
+
       const product = await Products.findByPk(id as string);
       if (!product) return res.status(404).json({ message: "Product not found" });
 
@@ -203,6 +207,9 @@ export class ProductsController {
       if (description) product.description = description;
       if (category_id) product.category_id = category_id;
       await product.save();
+
+      const check = await Products.findByPk(id as string);
+      console.log("AFTER SAVE category_id:", check?.category_id);
 
       if (variants) {
         let parsedVariants: any[] = [];
@@ -235,7 +242,7 @@ export class ProductsController {
               : null;
 
             const pictureUrl = file
-              ? `${BASE_URL}/${file.filename}`
+              ? `uploads/${BASE_URL}/${file.filename}`
               : v.existingPicture || "";
 
             if (v.variant_id) {
@@ -260,6 +267,29 @@ export class ProductsController {
     } catch (error) {
       console.error("Update product error:", error);
       return res.status(500).json({ message: "Failed to update product", error });
+    }
+  }
+
+  // ─────────────────────────────
+  // DELETE
+  // ─────────────────────────────
+  static async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const product = await Products.findByPk(id as string);
+      if (!product) return res.status(404).json({ message: "Product not found" });
+
+      // Delete all variants first (paranoid soft-delete)
+      await ProductVariants.destroy({ where: { product_id: id } });
+
+      // Soft-delete the product
+      await product.destroy();
+
+      return res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Delete product error:", error);
+      return res.status(500).json({ message: "Failed to delete product", error });
     }
   }
 }

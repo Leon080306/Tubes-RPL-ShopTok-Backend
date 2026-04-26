@@ -21,4 +21,6 @@ router.get("/:id", ProductsController.getById);
 
 router.put("/:id", uploadProduct.array("variant_images"), ProductsController.update);
 
+router.delete("/:id", ProductsController.delete);
+
 export default router;

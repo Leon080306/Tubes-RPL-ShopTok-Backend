@@ -24,7 +24,7 @@ export class Likes extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    user_id!: string;
+    declare user_id: string;
 
     @PrimaryKey
     @ForeignKey(() => Products)
@@ -32,11 +32,11 @@ export class Likes extends Model {
         type: DataType.UUID,
         allowNull: false,
     })
-    product_id!: string;
+    declare product_id: string;
 
     @BelongsTo(() => Users)
-    user!: Users;
+    declare user: Users;
 
     @BelongsTo(() => Products)
-    product!: Products;
+    declare product: Products;
 }
