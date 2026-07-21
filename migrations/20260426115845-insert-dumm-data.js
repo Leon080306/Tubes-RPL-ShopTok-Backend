@@ -1,342 +1,266 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
 
-// ─── Pre-generate all IDs ────────────────────────────────────────────────────
-const userIds = Array.from({ length: 7 }, () => uuidv4());
-const addressIds = Array.from({ length: 7 }, () => uuidv4());
-const shopIds = Array.from({ length: 4 }, () => uuidv4());
-const categoryIds = Array.from({ length: 10 }, () => uuidv4());
-const voucherIds = Array.from({ length: 4 }, () => uuidv4());
-const productIds = Array.from({ length: 16 }, () => uuidv4());
-const variantIds = Array.from({ length: 36 }, () => uuidv4());
-const orderIds = Array.from({ length: 14 }, () => uuidv4());
-const chatIds = Array.from({ length: 10 }, () => uuidv4());
-const notifIds = Array.from({ length: 8 }, () => uuidv4());
+const crypto = require('crypto');
+const uuidv4 = () => crypto.randomUUID();
+
+// ─── Pre-generate all IDs ───────────────────────────────────────────────────
+const userIds = Array.from({ length: 5 }, () => uuidv4());
+const addressIds = Array.from({ length: 5 }, () => uuidv4());
+const shopIds = Array.from({ length: 2 }, () => uuidv4());
+const categoryIds = Array.from({ length: 8 }, () => uuidv4());
+const voucherIds = Array.from({ length: 3 }, () => uuidv4());
+const productIds = Array.from({ length: 10 }, () => uuidv4());
+const variantIds = Array.from({ length: 20 }, () => uuidv4());
+const orderIds = Array.from({ length: 10 }, () => uuidv4());
+const chatIds = Array.from({ length: 5 }, () => uuidv4());
+const notifIds = Array.from({ length: 5 }, () => uuidv4());
 
 const now = new Date();
 const ts = { createdAt: now, updatedAt: now };
 
-// bcrypt hash of "password123" (cost 10)
+// Bcrypt hash of "password123" (cost 10)
 const PASSWORD = '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
 module.exports = {
   async up(queryInterface) {
-
-    // ── 1. Users ─────────────────────────────────────────────────────────────
+    // ── 1. Users (address_id null initially — circular dep with Addresses) ──
     await queryInterface.bulkInsert('Users', [
       {
-        user_id: userIds[0], first_name: 'Super', last_name: 'Admin',
-        email: 'superadmin@shoptok.com', password: PASSWORD,
-        phone_number: '081300000000', role: 'admin', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
+        user_id: userIds[0], first_name: 'Admin', last_name: 'User',
+        email: 'admin@example.com', password: PASSWORD,
+        phone_number: '081200000000', role: 'admin', status: 'active',
+        profile_pic: null, address_id: null, ...ts,
       },
       {
-        user_id: userIds[1], first_name: 'Agres', last_name: 'Pratama',
-        email: 'agres@shoptok.com', password: PASSWORD,
-        phone_number: '081311111111', role: 'seller', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
+        user_id: userIds[1], first_name: 'Budi', last_name: 'Santoso',
+        email: 'budi@example.com', password: PASSWORD,
+        phone_number: '081211111111', role: 'seller', status: 'active',
+        profile_pic: 'budi.png', address_id: null, ...ts,
       },
       {
-        user_id: userIds[2], first_name: 'Nadia', last_name: 'Permata',
-        email: 'nadia@shoptok.com', password: PASSWORD,
-        phone_number: '081322222222', role: 'seller', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
+        user_id: userIds[2], first_name: 'Siti', last_name: 'Rahayu',
+        email: 'siti@example.com', password: PASSWORD,
+        phone_number: '081222222222', role: 'seller', status: 'active',
+        profile_pic: 'siti.png', address_id: null, ...ts,
       },
       {
-        user_id: userIds[3], first_name: 'Rizky', last_name: 'Hidayat',
-        email: 'rizky@shoptok.com', password: PASSWORD,
-        phone_number: '081333333333', role: 'seller', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
+        user_id: userIds[3], first_name: 'Andi', last_name: 'Wijaya',
+        email: 'andi@example.com', password: PASSWORD,
+        phone_number: '081233333333', role: 'customer', status: 'active',
+        profile_pic: null, address_id: null, ...ts,
       },
       {
-        user_id: userIds[4], first_name: 'Farah', last_name: 'Aulia',
-        email: 'farah@shoptok.com', password: PASSWORD,
-        phone_number: '081344444444', role: 'seller', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
-      },
-      {
-        user_id: userIds[5], first_name: 'Bagas', last_name: 'Wicaksono',
-        email: 'bagas@shoptok.com', password: PASSWORD,
-        phone_number: '081355555555', role: 'customer', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
-      },
-      {
-        user_id: userIds[6], first_name: 'Cantika', last_name: 'Sari',
-        email: 'cantika@shoptok.com', password: PASSWORD,
-        phone_number: '081366666666', role: 'customer', status: 'active',
-        profile_pic: null, address_id: null, reset_token: null, reset_token_expiry: null, ...ts,
+        user_id: userIds[4], first_name: 'Dewi', last_name: 'Kusuma',
+        email: 'dewi@example.com', password: PASSWORD,
+        phone_number: '081244444444', role: 'customer', status: 'active',
+        profile_pic: null, address_id: null, ...ts,
       },
     ]);
 
-    // ── 2. Categories ────────────────────────────────────────────────────────
+    // ── 2. Categories (parents first, then children) ─────────────────────────
     await queryInterface.bulkInsert('Categories', [
       // Parents
       { category_id: categoryIds[0], parent_id: null, name: 'Electronics', icon: 'electronics.png', ...ts },
       { category_id: categoryIds[1], parent_id: null, name: 'Fashion', icon: 'fashion.png', ...ts },
-      { category_id: categoryIds[2], parent_id: null, name: 'Food & Drink', icon: 'food.png', ...ts },
-      { category_id: categoryIds[3], parent_id: null, name: 'Beauty', icon: 'beauty.png', ...ts },
-      // Children of Electronics
-      { category_id: categoryIds[4], parent_id: categoryIds[0], name: 'Audio', icon: 'audio.png', ...ts },
-      { category_id: categoryIds[5], parent_id: categoryIds[0], name: 'Gadgets', icon: 'gadgets.png', ...ts },
-      // Children of Fashion
-      { category_id: categoryIds[6], parent_id: categoryIds[1], name: 'Sneakers', icon: 'sneakers.png', ...ts },
-      { category_id: categoryIds[7], parent_id: categoryIds[1], name: 'Bags', icon: 'bags.png', ...ts },
-      // Children of Food
-      { category_id: categoryIds[8], parent_id: categoryIds[2], name: 'Snacks', icon: 'snacks.png', ...ts },
-      // Children of Beauty
-      { category_id: categoryIds[9], parent_id: categoryIds[3], name: 'Skincare', icon: 'skincare.png', ...ts },
+      { category_id: categoryIds[2], parent_id: null, name: 'Home & Living', icon: 'home.png', ...ts },
+      { category_id: categoryIds[3], parent_id: null, name: 'Sports', icon: 'sports.png', ...ts },
+      // Children
+      { category_id: categoryIds[4], parent_id: categoryIds[0], name: 'Smartphones', icon: 'smartphones.png', ...ts },
+      { category_id: categoryIds[5], parent_id: categoryIds[0], name: 'Laptops', icon: 'laptops.png', ...ts },
+      { category_id: categoryIds[6], parent_id: categoryIds[1], name: "Men's Clothing", icon: 'mens.png', ...ts },
+      { category_id: categoryIds[7], parent_id: categoryIds[1], name: "Women's Clothing", icon: 'womens.png', ...ts },
     ]);
 
     // ── 3. Vouchers ──────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Vouchers', [
-      { voucher_id: voucherIds[0], name: 'NEWUSER25', banner: 'newuser.png', expiry_date: new Date('2026-12-31'), discount_value: 25000.00, ...ts },
-      { voucher_id: voucherIds[1], name: 'MIDYEAR50', banner: 'midyear.png', expiry_date: new Date('2026-06-30'), discount_value: 50000.00, ...ts },
-      { voucher_id: voucherIds[2], name: 'FLASH100', banner: 'flash100.png', expiry_date: new Date('2026-03-31'), discount_value: 100000.00, ...ts },
-      { voucher_id: voucherIds[3], name: 'LOYAL15', banner: 'loyal15.png', expiry_date: new Date('2026-12-31'), discount_value: 15000.00, ...ts },
+      { voucher_id: voucherIds[0], name: 'WELCOME10', banner: 'welcome10.png', expiry_date: new Date('2025-12-31'), discount_value: 10000.00, ...ts },
+      { voucher_id: voucherIds[1], name: 'SAVE20', banner: 'save20.png', expiry_date: new Date('2025-09-30'), discount_value: 20000.00, ...ts },
+      { voucher_id: voucherIds[2], name: 'FLASH50', banner: 'flash50.png', expiry_date: new Date('2025-06-30'), discount_value: 50000.00, ...ts },
     ]);
 
     // ── 4. Shops ─────────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Shops', [
       {
         shop_id: shopIds[0], owner_id: userIds[1],
-        name: 'Toko Agres', description: 'Perlengkapan audio & gadget berkualitas.',
-        profile_pic: null, banner: null, is_approved: true, status: 'active', ...ts,
+        name: 'Toko Elektronik Budi',
+        description: 'Terpercaya untuk kebutuhan elektronik Anda.',
+        profile_pic: 'shop1_logo.png', banner: 'shop1_banner.png',
+        is_approved: true, status: 'active', ...ts,
       },
       {
         shop_id: shopIds[1], owner_id: userIds[2],
-        name: 'Nadia Sneakers', description: 'Sepatu sneakers lokal & import terlengkap.',
-        profile_pic: null, banner: null, is_approved: true, status: 'active', ...ts,
-      },
-      {
-        shop_id: shopIds[2], owner_id: userIds[3],
-        name: 'Rizky Snacks', description: 'Camilan enak dan sehat dikirim ke seluruh Indonesia.',
-        profile_pic: null, banner: null, is_approved: true, status: 'active', ...ts,
-      },
-      {
-        shop_id: shopIds[3], owner_id: userIds[4],
-        name: 'Farah Beauty', description: 'Produk skincare lokal pilihan untuk kulit sehat.',
-        profile_pic: null, banner: null, is_approved: true, status: 'active', ...ts,
+        name: 'Fashion by Siti',
+        description: 'Tren fashion terkini untuk pria dan wanita.',
+        profile_pic: 'shop2_logo.png', banner: 'shop2_banner.png',
+        is_approved: true, status: 'active', ...ts,
       },
     ]);
 
     // ── 5. Addresses ─────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Addresses', [
-      { address_id: addressIds[0], user_id: userIds[0], full_name: 'Super Admin', address: 'Jl. Merdeka No. 1', province: 'DKI Jakarta', city: 'Jakarta Pusat', sub_district: 'Gambir', phone_number: '081300000000', ...ts },
-      { address_id: addressIds[1], user_id: userIds[1], full_name: 'Agres Pratama', address: 'Jl. Kenanga No. 12', province: 'Jawa Barat', city: 'Bekasi', sub_district: 'Bekasi Timur', phone_number: '081311111111', ...ts },
-      { address_id: addressIds[2], user_id: userIds[2], full_name: 'Nadia Permata', address: 'Jl. Melati No. 7', province: 'Jawa Tengah', city: 'Semarang', sub_district: 'Banyumanik', phone_number: '081322222222', ...ts },
-      { address_id: addressIds[3], user_id: userIds[3], full_name: 'Rizky Hidayat', address: 'Jl. Anggrek No. 22', province: 'Jawa Timur', city: 'Surabaya', sub_district: 'Gubeng', phone_number: '081333333333', ...ts },
-      { address_id: addressIds[4], user_id: userIds[4], full_name: 'Farah Aulia', address: 'Jl. Dahlia No. 5', province: 'DI Yogyakarta', city: 'Yogyakarta', sub_district: 'Sleman', phone_number: '081344444444', ...ts },
-      { address_id: addressIds[5], user_id: userIds[5], full_name: 'Bagas Wicaksono', address: 'Jl. Raya Bogor No. 88', province: 'Jawa Barat', city: 'Bogor', sub_district: 'Bogor Utara', phone_number: '081355555555', ...ts },
-      { address_id: addressIds[6], user_id: userIds[6], full_name: 'Cantika Sari', address: 'Jl. Pahlawan No. 15', province: 'Bali', city: 'Denpasar', sub_district: 'Denpasar Selatan', phone_number: '081366666666', ...ts },
+      { address_id: addressIds[0], user_id: userIds[0], full_name: 'Admin User', address: 'Jl. Gatot Subroto No. 1', province: 'DKI Jakarta', city: 'Jakarta Selatan', sub_district: 'Kuningan', phone_number: '081200000000', ...ts },
+      { address_id: addressIds[1], user_id: userIds[1], full_name: 'Budi Santoso', address: 'Jl. Sudirman No. 10', province: 'DKI Jakarta', city: 'Jakarta Pusat', sub_district: 'Menteng', phone_number: '081211111111', ...ts },
+      { address_id: addressIds[2], user_id: userIds[2], full_name: 'Siti Rahayu', address: 'Jl. Diponegoro No. 5', province: 'Jawa Barat', city: 'Bandung', sub_district: 'Coblong', phone_number: '081222222222', ...ts },
+      { address_id: addressIds[3], user_id: userIds[3], full_name: 'Andi Wijaya', address: 'Jl. Malioboro No. 3', province: 'DI Yogyakarta', city: 'Yogyakarta', sub_district: 'Gedongtengen', phone_number: '081233333333', ...ts },
+      { address_id: addressIds[4], user_id: userIds[4], full_name: 'Dewi Kusuma', address: 'Jl. Thamrin No. 7', province: 'DKI Jakarta', city: 'Jakarta Selatan', sub_district: 'Setiabudi', phone_number: '081244444444', ...ts },
     ]);
 
     // ── 6. Back-fill Users.address_id ────────────────────────────────────────
-    for (let i = 0; i < 7; i++) {
-      await queryInterface.bulkUpdate('Users', { address_id: addressIds[i] }, { user_id: userIds[i] });
+    const userAddressMap = [
+      [userIds[0], addressIds[0]],
+      [userIds[1], addressIds[1]],
+      [userIds[2], addressIds[2]],
+      [userIds[3], addressIds[3]],
+      [userIds[4], addressIds[4]],
+    ];
+    for (const [uid, aid] of userAddressMap) {
+      await queryInterface.bulkUpdate('Users', { address_id: aid }, { user_id: uid });
     }
 
     // ── 7. Products ──────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Products', [
-      // Toko Agres — Audio & Gadgets
-      { product_id: productIds[0], shop_id: shopIds[0], category_id: categoryIds[4], name: 'JBL Flip 6', description: 'Speaker portabel tahan air dengan bass yang kuat.', view_count: 820, ...ts },
-      { product_id: productIds[1], shop_id: shopIds[0], category_id: categoryIds[4], name: 'Earbuds TWS ProMax', description: 'True wireless earbuds dengan ANC dan baterai 30 jam.', view_count: 640, ...ts },
-      { product_id: productIds[2], shop_id: shopIds[0], category_id: categoryIds[5], name: 'Smartwatch Xtreme', description: 'Smartwatch dengan monitoring kesehatan lengkap.', view_count: 510, ...ts },
-      { product_id: productIds[3], shop_id: shopIds[0], category_id: categoryIds[5], name: 'Power Bank 20000mAh', description: 'Power bank fast charging 65W untuk semua perangkat.', view_count: 390, ...ts },
-      // Nadia Sneakers
-      { product_id: productIds[4], shop_id: shopIds[1], category_id: categoryIds[6], name: 'Sneakers Panda Edition', description: 'Sneakers kanvas hitam putih ikonik edisi panda.', view_count: 970, ...ts },
-      { product_id: productIds[5], shop_id: shopIds[1], category_id: categoryIds[6], name: 'Running Shoes AirTech', description: 'Sepatu lari ringan dengan sol anti-slip.', view_count: 750, ...ts },
-      { product_id: productIds[6], shop_id: shopIds[1], category_id: categoryIds[7], name: 'Tote Bag Canvas', description: 'Tas kanvas serbaguna cocok untuk kuliah dan kerja.', view_count: 580, ...ts },
-      { product_id: productIds[7], shop_id: shopIds[1], category_id: categoryIds[7], name: 'Sling Bag Mini', description: 'Tas selempang mini dengan bahan kulit sintetis premium.', view_count: 430, ...ts },
-      // Rizky Snacks
-      { product_id: productIds[8], shop_id: shopIds[2], category_id: categoryIds[8], name: 'Keripik Tempe Pedas', description: 'Keripik tempe renyah dengan bumbu pedas khas Jawa.', view_count: 1100, ...ts },
-      { product_id: productIds[9], shop_id: shopIds[2], category_id: categoryIds[8], name: 'Brownies Fudgy', description: 'Brownies coklat premium lembut dan fudgy homemade.', view_count: 860, ...ts },
-      { product_id: productIds[10], shop_id: shopIds[2], category_id: categoryIds[8], name: 'Granola Oat Honey', description: 'Granola sehat campuran oat dan madu, bebas pengawet.', view_count: 620, ...ts },
-      { product_id: productIds[11], shop_id: shopIds[2], category_id: categoryIds[8], name: 'Choco Crispy Bar', description: 'Bar coklat renyah dengan isian caramel dan hazelnut.', view_count: 490, ...ts },
-      // Farah Beauty
-      { product_id: productIds[12], shop_id: shopIds[3], category_id: categoryIds[9], name: 'Serum Vitamin C Glow', description: 'Serum vitamin C brightening untuk kulit cerah bercahaya.', view_count: 1300, ...ts },
-      { product_id: productIds[13], shop_id: shopIds[3], category_id: categoryIds[9], name: 'Moisturizer Aloe Vera', description: 'Pelembab ringan dengan ekstrak lidah buaya, cocok semua jenis kulit.', view_count: 980, ...ts },
-      { product_id: productIds[14], shop_id: shopIds[3], category_id: categoryIds[9], name: 'Sunscreen SPF 50 PA+++', description: 'Tabir surya ringan tidak lengket, cocok untuk daily use.', view_count: 1150, ...ts },
-      { product_id: productIds[15], shop_id: shopIds[3], category_id: categoryIds[9], name: 'Toner Niacinamide 10%', description: 'Toner niacinamide untuk mengecilkan pori dan mencerahkan.', view_count: 870, ...ts },
+      { product_id: productIds[0], shop_id: shopIds[0], category_id: categoryIds[4], name: 'iPhone 15 Pro', description: 'Smartphone flagship terbaru dari Apple dengan chip A17 Pro.', view_count: 1500, ...ts },
+      { product_id: productIds[1], shop_id: shopIds[0], category_id: categoryIds[4], name: 'Samsung Galaxy S24', description: 'Android flagship dengan kamera 200MP dan layar Dynamic AMOLED.', view_count: 1200, ...ts },
+      { product_id: productIds[2], shop_id: shopIds[0], category_id: categoryIds[5], name: 'MacBook Pro M3', description: 'Laptop profesional dengan chip M3 dari Apple.', view_count: 900, ...ts },
+      { product_id: productIds[3], shop_id: shopIds[0], category_id: categoryIds[5], name: 'ASUS ROG Zephyrus', description: 'Laptop gaming bertenaga tinggi dengan GPU RTX 4080.', view_count: 750, ...ts },
+      { product_id: productIds[4], shop_id: shopIds[0], category_id: categoryIds[0], name: 'Sony WH-1000XM5', description: 'Headphone nirkabel dengan noise cancelling terbaik di kelasnya.', view_count: 600, ...ts },
+      { product_id: productIds[5], shop_id: shopIds[1], category_id: categoryIds[6], name: 'Kemeja Batik Pria', description: 'Kemeja batik motif parang dengan bahan katun premium.', view_count: 400, ...ts },
+      { product_id: productIds[6], shop_id: shopIds[1], category_id: categoryIds[6], name: 'Celana Chino Slim', description: 'Celana chino pria slim fit tersedia berbagai warna.', view_count: 350, ...ts },
+      { product_id: productIds[7], shop_id: shopIds[1], category_id: categoryIds[7], name: 'Dress Floral Elegan', description: 'Dress wanita motif floral cocok untuk acara formal maupun kasual.', view_count: 500, ...ts },
+      { product_id: productIds[8], shop_id: shopIds[1], category_id: categoryIds[7], name: 'Blouse Korea Style', description: 'Blouse wanita bergaya Korea dengan bahan sifon lembut.', view_count: 450, ...ts },
+      { product_id: productIds[9], shop_id: shopIds[1], category_id: categoryIds[7], name: 'Rok Midi Wanita', description: 'Rok midi stylish cocok untuk outfit sehari-hari maupun semi-formal.', view_count: 300, ...ts },
     ]);
 
-    // ── 8. ProductVariants ───────────────────────────────────────────────────
+    // ── 8. ProductVariants (2 per product) ───────────────────────────────────
     await queryInterface.bulkInsert('ProductVariants', [
-      // JBL Flip 6
-      { variant_id: variantIds[0], product_id: productIds[0], name: 'Black', picture: 'jbl_black.png', stock: 40, price: 1299000.00, ...ts },
-      { variant_id: variantIds[1], product_id: productIds[0], name: 'Blue', picture: 'jbl_blue.png', stock: 30, price: 1299000.00, ...ts },
-      { variant_id: variantIds[2], product_id: productIds[0], name: 'Red', picture: 'jbl_red.png', stock: 25, price: 1349000.00, ...ts },
-      // Earbuds TWS ProMax
-      { variant_id: variantIds[3], product_id: productIds[1], name: 'Pearl White', picture: 'tws_white.png', stock: 50, price: 599000.00, ...ts },
-      { variant_id: variantIds[4], product_id: productIds[1], name: 'Midnight Black', picture: 'tws_black.png', stock: 45, price: 599000.00, ...ts },
-      // Smartwatch Xtreme
-      { variant_id: variantIds[5], product_id: productIds[2], name: 'Black Strap', picture: 'watch_black.png', stock: 35, price: 899000.00, ...ts },
-      { variant_id: variantIds[6], product_id: productIds[2], name: 'Brown Leather', picture: 'watch_brown.png', stock: 20, price: 949000.00, ...ts },
-      // Power Bank
-      { variant_id: variantIds[7], product_id: productIds[3], name: 'White', picture: 'pb_white.png', stock: 60, price: 449000.00, ...ts },
-      { variant_id: variantIds[8], product_id: productIds[3], name: 'Black', picture: 'pb_black.png', stock: 55, price: 449000.00, ...ts },
-      // Sneakers Panda
-      { variant_id: variantIds[9], product_id: productIds[4], name: 'Size 39', picture: 'panda_39.png', stock: 20, price: 379000.00, ...ts },
-      { variant_id: variantIds[10], product_id: productIds[4], name: 'Size 40', picture: 'panda_40.png', stock: 25, price: 379000.00, ...ts },
-      { variant_id: variantIds[11], product_id: productIds[4], name: 'Size 42', picture: 'panda_42.png', stock: 15, price: 379000.00, ...ts },
-      // Running Shoes
-      { variant_id: variantIds[12], product_id: productIds[5], name: 'Navy - 40', picture: 'run_navy_40.png', stock: 18, price: 459000.00, ...ts },
-      { variant_id: variantIds[13], product_id: productIds[5], name: 'Green - 41', picture: 'run_green_41.png', stock: 14, price: 459000.00, ...ts },
-      // Tote Bag
-      { variant_id: variantIds[14], product_id: productIds[6], name: 'Natural', picture: 'tote_natural.png', stock: 40, price: 129000.00, ...ts },
-      { variant_id: variantIds[15], product_id: productIds[6], name: 'Black', picture: 'tote_black.png', stock: 35, price: 129000.00, ...ts },
-      // Sling Bag
-      { variant_id: variantIds[16], product_id: productIds[7], name: 'Brown', picture: 'sling_brown.png', stock: 22, price: 199000.00, ...ts },
-      { variant_id: variantIds[17], product_id: productIds[7], name: 'Black', picture: 'sling_black.png', stock: 20, price: 199000.00, ...ts },
-      // Keripik Tempe
-      { variant_id: variantIds[18], product_id: productIds[8], name: 'Pedas Level 1', picture: 'tempe_l1.png', stock: 100, price: 25000.00, ...ts },
-      { variant_id: variantIds[19], product_id: productIds[8], name: 'Pedas Level 3', picture: 'tempe_l3.png', stock: 80, price: 25000.00, ...ts },
-      // Brownies
-      { variant_id: variantIds[20], product_id: productIds[9], name: 'Original', picture: 'brownies_orig.png', stock: 60, price: 45000.00, ...ts },
-      { variant_id: variantIds[21], product_id: productIds[9], name: 'Cheese', picture: 'brownies_cheese.png', stock: 50, price: 49000.00, ...ts },
-      // Granola
-      { variant_id: variantIds[22], product_id: productIds[10], name: '250gr', picture: 'granola_250.png', stock: 70, price: 39000.00, ...ts },
-      { variant_id: variantIds[23], product_id: productIds[10], name: '500gr', picture: 'granola_500.png', stock: 55, price: 69000.00, ...ts },
-      // Choco Crispy Bar
-      { variant_id: variantIds[24], product_id: productIds[11], name: 'Dark Choco', picture: 'choco_dark.png', stock: 90, price: 19000.00, ...ts },
-      { variant_id: variantIds[25], product_id: productIds[11], name: 'Milk Choco', picture: 'choco_milk.png', stock: 85, price: 19000.00, ...ts },
-      // Serum Vitamin C
-      { variant_id: variantIds[26], product_id: productIds[12], name: '20ml', picture: 'serum_20.png', stock: 80, price: 129000.00, ...ts },
-      { variant_id: variantIds[27], product_id: productIds[12], name: '50ml', picture: 'serum_50.png', stock: 60, price: 229000.00, ...ts },
-      // Moisturizer
-      { variant_id: variantIds[28], product_id: productIds[13], name: 'For Oily Skin', picture: 'moist_oily.png', stock: 65, price: 99000.00, ...ts },
-      { variant_id: variantIds[29], product_id: productIds[13], name: 'For Dry Skin', picture: 'moist_dry.png', stock: 60, price: 99000.00, ...ts },
-      // Sunscreen
-      { variant_id: variantIds[30], product_id: productIds[14], name: '30ml Travel', picture: 'sun_30.png', stock: 90, price: 79000.00, ...ts },
-      { variant_id: variantIds[31], product_id: productIds[14], name: '60ml Regular', picture: 'sun_60.png', stock: 75, price: 129000.00, ...ts },
-      // Toner
-      { variant_id: variantIds[32], product_id: productIds[15], name: '100ml', picture: 'toner_100.png', stock: 85, price: 89000.00, ...ts },
-      { variant_id: variantIds[33], product_id: productIds[15], name: '200ml', picture: 'toner_200.png', stock: 70, price: 149000.00, ...ts },
+      // productIds[0] iPhone 15 Pro
+      { variant_id: variantIds[0], product_id: productIds[0], name: 'Natural Titanium 256GB', picture: 'iphone15_natural.png', stock: 50, price: 19999000.00, ...ts },
+      { variant_id: variantIds[1], product_id: productIds[0], name: 'Black Titanium 512GB', picture: 'iphone15_black.png', stock: 30, price: 23999000.00, ...ts },
+      // productIds[1] Samsung Galaxy S24
+      { variant_id: variantIds[2], product_id: productIds[1], name: 'Phantom Black 256GB', picture: 'galaxy_black.png', stock: 40, price: 14999000.00, ...ts },
+      { variant_id: variantIds[3], product_id: productIds[1], name: 'Marble Gray 512GB', picture: 'galaxy_gray.png', stock: 25, price: 17999000.00, ...ts },
+      // productIds[2] MacBook Pro M3
+      { variant_id: variantIds[4], product_id: productIds[2], name: 'Space Gray 16GB/512GB', picture: 'macbook_gray.png', stock: 20, price: 29999000.00, ...ts },
+      { variant_id: variantIds[5], product_id: productIds[2], name: 'Silver 32GB/1TB', picture: 'macbook_silver.png', stock: 15, price: 39999000.00, ...ts },
+      // productIds[3] ASUS ROG Zephyrus
+      { variant_id: variantIds[6], product_id: productIds[3], name: 'Eclipse Gray 16GB RAM', picture: 'rog_gray_16.png', stock: 18, price: 24999000.00, ...ts },
+      { variant_id: variantIds[7], product_id: productIds[3], name: 'Eclipse Gray 32GB RAM', picture: 'rog_gray_32.png', stock: 12, price: 31999000.00, ...ts },
+      // productIds[4] Sony WH-1000XM5
+      { variant_id: variantIds[8], product_id: productIds[4], name: 'Black', picture: 'sony_black.png', stock: 60, price: 4999000.00, ...ts },
+      { variant_id: variantIds[9], product_id: productIds[4], name: 'Silver', picture: 'sony_silver.png', stock: 45, price: 4999000.00, ...ts },
+      // productIds[5] Kemeja Batik
+      { variant_id: variantIds[10], product_id: productIds[5], name: 'Motif Parang - M', picture: 'batik_m.png', stock: 30, price: 189000.00, ...ts },
+      { variant_id: variantIds[11], product_id: productIds[5], name: 'Motif Parang - L', picture: 'batik_l.png', stock: 25, price: 189000.00, ...ts },
+      // productIds[6] Celana Chino
+      { variant_id: variantIds[12], product_id: productIds[6], name: 'Khaki - 30', picture: 'chino_khaki.png', stock: 40, price: 229000.00, ...ts },
+      { variant_id: variantIds[13], product_id: productIds[6], name: 'Navy - 32', picture: 'chino_navy.png', stock: 35, price: 229000.00, ...ts },
+      // productIds[7] Dress Floral
+      { variant_id: variantIds[14], product_id: productIds[7], name: 'Pink Floral - S', picture: 'dress_pink_s.png', stock: 20, price: 349000.00, ...ts },
+      { variant_id: variantIds[15], product_id: productIds[7], name: 'Blue Floral - M', picture: 'dress_blue_m.png', stock: 18, price: 349000.00, ...ts },
+      // productIds[8] Blouse Korea
+      { variant_id: variantIds[16], product_id: productIds[8], name: 'White - S', picture: 'blouse_white.png', stock: 25, price: 199000.00, ...ts },
+      { variant_id: variantIds[17], product_id: productIds[8], name: 'Cream - M', picture: 'blouse_cream.png', stock: 22, price: 199000.00, ...ts },
+      // productIds[9] Rok Midi
+      { variant_id: variantIds[18], product_id: productIds[9], name: 'Black - S', picture: 'skirt_black_s.png', stock: 30, price: 279000.00, ...ts },
+      { variant_id: variantIds[19], product_id: productIds[9], name: 'Brown - M', picture: 'skirt_brown_m.png', stock: 28, price: 279000.00, ...ts },
     ]);
 
     // ── 9. CartItems ─────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('CartItems', [
-      // Bagas
-      { user_id: userIds[5], variant_id: variantIds[0], quantity: 1, is_selected: true, ...ts },
-      { user_id: userIds[5], variant_id: variantIds[3], quantity: 1, is_selected: true, ...ts },
-      { user_id: userIds[5], variant_id: variantIds[9], quantity: 2, is_selected: false, ...ts },
-      { user_id: userIds[5], variant_id: variantIds[22], quantity: 1, is_selected: true, ...ts },
-      // Cantika
-      { user_id: userIds[6], variant_id: variantIds[26], quantity: 2, is_selected: true, ...ts },
-      { user_id: userIds[6], variant_id: variantIds[30], quantity: 1, is_selected: true, ...ts },
-      { user_id: userIds[6], variant_id: variantIds[14], quantity: 1, is_selected: false, ...ts },
-      { user_id: userIds[6], variant_id: variantIds[20], quantity: 3, is_selected: true, ...ts },
+      { user_id: userIds[3], variant_id: variantIds[0], quantity: 1, is_selected: true, ...ts },
+      { user_id: userIds[3], variant_id: variantIds[8], quantity: 1, is_selected: false, ...ts },
+      { user_id: userIds[3], variant_id: variantIds[12], quantity: 2, is_selected: true, ...ts },
+      { user_id: userIds[4], variant_id: variantIds[14], quantity: 1, is_selected: true, ...ts },
+      { user_id: userIds[4], variant_id: variantIds[16], quantity: 2, is_selected: true, ...ts },
+      { user_id: userIds[4], variant_id: variantIds[18], quantity: 1, is_selected: false, ...ts },
     ]);
 
     // ── 10. Orders ───────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Orders', [
-      // Bagas orders
-      { order_id: orderIds[0], customer_id: userIds[5], shop_id: shopIds[0], address_id: addressIds[5], status: 'completed', amount_paid: 1299000.00, ...ts },
-      { order_id: orderIds[1], customer_id: userIds[5], shop_id: shopIds[0], address_id: addressIds[5], status: 'completed', amount_paid: 599000.00, ...ts },
-      { order_id: orderIds[2], customer_id: userIds[5], shop_id: shopIds[1], address_id: addressIds[5], status: 'pending', amount_paid: 379000.00, ...ts },
-      { order_id: orderIds[3], customer_id: userIds[5], shop_id: shopIds[1], address_id: addressIds[5], status: 'cancelled', amount_paid: 459000.00, ...ts },
-      { order_id: orderIds[4], customer_id: userIds[5], shop_id: shopIds[2], address_id: addressIds[5], status: 'completed', amount_paid: 89000.00, ...ts },
-      { order_id: orderIds[5], customer_id: userIds[5], shop_id: shopIds[2], address_id: addressIds[5], status: 'pending', amount_paid: 45000.00, ...ts },
-      { order_id: orderIds[6], customer_id: userIds[5], shop_id: shopIds[3], address_id: addressIds[5], status: 'completed', amount_paid: 229000.00, ...ts },
-      // Cantika orders
-      { order_id: orderIds[7], customer_id: userIds[6], shop_id: shopIds[3], address_id: addressIds[6], status: 'completed', amount_paid: 129000.00, ...ts },
-      { order_id: orderIds[8], customer_id: userIds[6], shop_id: shopIds[3], address_id: addressIds[6], status: 'completed', amount_paid: 99000.00, ...ts },
-      { order_id: orderIds[9], customer_id: userIds[6], shop_id: shopIds[3], address_id: addressIds[6], status: 'pending', amount_paid: 89000.00, ...ts },
-      { order_id: orderIds[10], customer_id: userIds[6], shop_id: shopIds[1], address_id: addressIds[6], status: 'completed', amount_paid: 129000.00, ...ts },
-      { order_id: orderIds[11], customer_id: userIds[6], shop_id: shopIds[1], address_id: addressIds[6], status: 'pending', amount_paid: 199000.00, ...ts },
-      { order_id: orderIds[12], customer_id: userIds[6], shop_id: shopIds[2], address_id: addressIds[6], status: 'completed', amount_paid: 114000.00, ...ts },
-      { order_id: orderIds[13], customer_id: userIds[6], shop_id: shopIds[0], address_id: addressIds[6], status: 'completed', amount_paid: 899000.00, ...ts },
+      { order_id: orderIds[0], customer_id: userIds[3], shop_id: shopIds[0], address_id: addressIds[3], status: 'completed', amount_paid: 19999000.00, ...ts },
+      { order_id: orderIds[1], customer_id: userIds[3], shop_id: shopIds[0], address_id: addressIds[3], status: 'completed', amount_paid: 4999000.00, ...ts },
+      { order_id: orderIds[2], customer_id: userIds[3], shop_id: shopIds[0], address_id: addressIds[3], status: 'pending', amount_paid: 14999000.00, ...ts },
+      { order_id: orderIds[3], customer_id: userIds[3], shop_id: shopIds[0], address_id: addressIds[3], status: 'cancelled', amount_paid: 29999000.00, ...ts },
+      { order_id: orderIds[4], customer_id: userIds[3], shop_id: shopIds[1], address_id: addressIds[3], status: 'completed', amount_paid: 418000.00, ...ts },
+      { order_id: orderIds[5], customer_id: userIds[3], shop_id: shopIds[1], address_id: addressIds[3], status: 'pending', amount_paid: 229000.00, ...ts },
+      { order_id: orderIds[6], customer_id: userIds[4], shop_id: shopIds[0], address_id: addressIds[4], status: 'completed', amount_paid: 23999000.00, ...ts },
+      { order_id: orderIds[7], customer_id: userIds[4], shop_id: shopIds[0], address_id: addressIds[4], status: 'pending', amount_paid: 24999000.00, ...ts },
+      { order_id: orderIds[8], customer_id: userIds[4], shop_id: shopIds[1], address_id: addressIds[4], status: 'completed', amount_paid: 548000.00, ...ts },
+      { order_id: orderIds[9], customer_id: userIds[4], shop_id: shopIds[1], address_id: addressIds[4], status: 'pending', amount_paid: 279000.00, ...ts },
     ]);
 
     // ── 11. OrderItems ───────────────────────────────────────────────────────
     await queryInterface.bulkInsert('OrderItems', [
       { order_id: orderIds[0], variant_id: variantIds[0], quantity: 1, ...ts },
-      { order_id: orderIds[1], variant_id: variantIds[3], quantity: 1, ...ts },
-      { order_id: orderIds[2], variant_id: variantIds[9], quantity: 1, ...ts },
-      { order_id: orderIds[3], variant_id: variantIds[12], quantity: 1, ...ts },
-      { order_id: orderIds[4], variant_id: variantIds[18], quantity: 2, ...ts },
-      { order_id: orderIds[4], variant_id: variantIds[24], quantity: 2, ...ts },
-      { order_id: orderIds[5], variant_id: variantIds[20], quantity: 1, ...ts },
-      { order_id: orderIds[6], variant_id: variantIds[26], quantity: 1, ...ts },
-      { order_id: orderIds[6], variant_id: variantIds[30], quantity: 1, ...ts },
-      { order_id: orderIds[7], variant_id: variantIds[27], quantity: 1, ...ts },
-      { order_id: orderIds[8], variant_id: variantIds[28], quantity: 1, ...ts },
-      { order_id: orderIds[9], variant_id: variantIds[32], quantity: 1, ...ts },
-      { order_id: orderIds[10], variant_id: variantIds[14], quantity: 1, ...ts },
-      { order_id: orderIds[11], variant_id: variantIds[16], quantity: 1, ...ts },
-      { order_id: orderIds[12], variant_id: variantIds[21], quantity: 1, ...ts },
-      { order_id: orderIds[12], variant_id: variantIds[25], quantity: 3, ...ts },
-      { order_id: orderIds[13], variant_id: variantIds[5], quantity: 1, ...ts },
+      { order_id: orderIds[1], variant_id: variantIds[8], quantity: 1, ...ts },
+      { order_id: orderIds[2], variant_id: variantIds[2], quantity: 1, ...ts },
+      { order_id: orderIds[3], variant_id: variantIds[4], quantity: 1, ...ts },
+      { order_id: orderIds[4], variant_id: variantIds[10], quantity: 1, ...ts },
+      { order_id: orderIds[4], variant_id: variantIds[12], quantity: 1, ...ts },
+      { order_id: orderIds[5], variant_id: variantIds[13], quantity: 1, ...ts },
+      { order_id: orderIds[6], variant_id: variantIds[1], quantity: 1, ...ts },
+      { order_id: orderIds[7], variant_id: variantIds[6], quantity: 1, ...ts },
+      { order_id: orderIds[8], variant_id: variantIds[14], quantity: 1, ...ts },
+      { order_id: orderIds[8], variant_id: variantIds[16], quantity: 1, ...ts },
+      { order_id: orderIds[9], variant_id: variantIds[18], quantity: 1, ...ts },
     ]);
 
     // ── 12. VouchersUsed ─────────────────────────────────────────────────────
     await queryInterface.bulkInsert('VouchersUsed', [
       { voucher_id: voucherIds[0], order_id: orderIds[0], ...ts },
       { voucher_id: voucherIds[1], order_id: orderIds[4], ...ts },
-      { voucher_id: voucherIds[2], order_id: orderIds[7], ...ts },
-      { voucher_id: voucherIds[3], order_id: orderIds[12], ...ts },
+      { voucher_id: voucherIds[2], order_id: orderIds[6], ...ts },
     ]);
 
-    // ── 13. Likes ─────────────────────────────────────────────────────────────
+    // ── 13. Likes (updatedAt: false — only createdAt) ────────────────────────
     await queryInterface.bulkInsert('Likes', [
-      { user_id: userIds[5], product_id: productIds[0], createdAt: now },
-      { user_id: userIds[5], product_id: productIds[4], createdAt: now },
-      { user_id: userIds[5], product_id: productIds[8], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[12], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[14], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[6], createdAt: now },
+      { user_id: userIds[3], product_id: productIds[0], createdAt: now },
+      { user_id: userIds[3], product_id: productIds[2], createdAt: now },
+      { user_id: userIds[3], product_id: productIds[4], createdAt: now },
+      { user_id: userIds[4], product_id: productIds[7], createdAt: now },
+      { user_id: userIds[4], product_id: productIds[8], createdAt: now },
     ]);
 
-    // ── 14. Wishlists ────────────────────────────────────────────────────────
+    // ── 14. Wishlists (updatedAt: false — only createdAt) ────────────────────
     await queryInterface.bulkInsert('Wishlists', [
-      { user_id: userIds[5], product_id: productIds[2], createdAt: now },
-      { user_id: userIds[5], product_id: productIds[9], createdAt: now },
-      { user_id: userIds[5], product_id: productIds[13], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[1], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[5], createdAt: now },
-      { user_id: userIds[6], product_id: productIds[15], createdAt: now },
+      { user_id: userIds[3], product_id: productIds[1], createdAt: now },
+      { user_id: userIds[3], product_id: productIds[3], createdAt: now },
+      { user_id: userIds[4], product_id: productIds[5], createdAt: now },
+      { user_id: userIds[4], product_id: productIds[6], createdAt: now },
+      { user_id: userIds[4], product_id: productIds[9], createdAt: now },
     ]);
 
     // ── 15. Ratings ──────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Ratings', [
-      { user_id: userIds[5], product_id: productIds[0], value: 5.0, title: 'Suaranya mantap!', description: 'Bass kenceng, cocok buat outdoor. Recommended banget.', picture: null, ...ts },
-      { user_id: userIds[5], product_id: productIds[1], value: 4.5, title: 'ANC-nya keren', description: 'Noise cancelling-nya efektif banget, puas pake ini.', picture: null, ...ts },
-      { user_id: userIds[5], product_id: productIds[8], value: 5.0, title: 'Ketagihan!', description: 'Gurih dan pedasnya pas, kemasan rapi, cepat sampai.', picture: null, ...ts },
-      { user_id: userIds[5], product_id: productIds[12], value: 4.0, title: 'Glowing beneran', description: 'Setelah 2 minggu pake muka jadi lebih cerah, suka!', picture: null, ...ts },
-      { user_id: userIds[6], product_id: productIds[12], value: 5.0, title: 'HG serum aku!', description: 'Teksturnya ringan, ga bikin gerah, kulit cerah natural.', picture: null, ...ts },
-      { user_id: userIds[6], product_id: productIds[14], value: 4.5, title: 'Sunscreen terbaik', description: 'Ga ada white cast, ga lengket, cocok buat kulit berminyak.', picture: null, ...ts },
-      { user_id: userIds[6], product_id: productIds[6], value: 4.0, title: 'Tasnya bagus', description: 'Bahan oke, jahitannya rapi, muat banyak barang.', picture: null, ...ts },
-      { user_id: userIds[6], product_id: productIds[9], value: 5.0, title: 'Enak banget!', description: 'Brownies paling fudgy yang pernah aku coba. Wajib beli lagi!', picture: null, ...ts },
+      { user_id: userIds[3], product_id: productIds[0], value: 4.5, title: 'Mantap!', description: 'Kualitas kamera luar biasa, sangat puas.', picture: null, ...ts },
+      { user_id: userIds[3], product_id: productIds[2], value: 5.0, title: 'Laptop terbaik', description: 'Chip M3 sangat kencang, cocok untuk editing video.', picture: null, ...ts },
+      { user_id: userIds[3], product_id: productIds[4], value: 4.0, title: 'Noise cancel oke', description: 'Sangat membantu saat WFH, suara jernih.', picture: null, ...ts },
+      { user_id: userIds[4], product_id: productIds[7], value: 5.0, title: 'Cantik banget!', description: 'Sesuai foto, bahannya adem dan nyaman.', picture: 'rate_1.png', ...ts },
+      { user_id: userIds[4], product_id: productIds[8], value: 4.5, title: 'Recommended seller', description: 'Pengiriman cepat, blouse rapih dan sesuai ukuran.', picture: 'rate_2.png', ...ts },
     ]);
 
-    // ── 16. Chats ─────────────────────────────────────────────────────────────
+    // ── 16. Chats ────────────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Chats', [
-      { chat_id: chatIds[0], user_id: userIds[5], shop_id: shopIds[0], sender_role: 'customer', message: 'Halo kak, JBL Flip 6 warna merah masih ready?', ...ts },
-      { chat_id: chatIds[1], user_id: userIds[5], shop_id: shopIds[0], sender_role: 'seller', message: 'Masih ready kak, mau pesan berapa unit?', ...ts },
-      { chat_id: chatIds[2], user_id: userIds[5], shop_id: shopIds[2], sender_role: 'customer', message: 'Granola bisa custom rasa ga kak?', ...ts },
-      { chat_id: chatIds[3], user_id: userIds[5], shop_id: shopIds[2], sender_role: 'seller', message: 'Untuk saat ini belum bisa custom kak, tapi ada 3 varian tersedia.', ...ts },
-      { chat_id: chatIds[4], user_id: userIds[6], shop_id: shopIds[3], sender_role: 'customer', message: 'Kak serum vitamin C-nya cocok ga buat kulit sensitif?', ...ts },
-      { chat_id: chatIds[5], user_id: userIds[6], shop_id: shopIds[3], sender_role: 'seller', message: 'Bisa kak, formulanya sudah dermatologist tested dan hypoallergenic.', ...ts },
-      { chat_id: chatIds[6], user_id: userIds[6], shop_id: shopIds[1], sender_role: 'customer', message: 'Sneakers panda ada size 41 ga kak?', ...ts },
-      { chat_id: chatIds[7], user_id: userIds[6], shop_id: shopIds[1], sender_role: 'seller', message: 'Maaf kak, size 41 sedang kosong, ETA 2 minggu lagi.', ...ts },
-      { chat_id: chatIds[8], user_id: userIds[5], shop_id: shopIds[1], sender_role: 'customer', message: 'Tote bag natural bisa dapat diskon beli 2?', ...ts },
-      { chat_id: chatIds[9], user_id: userIds[5], shop_id: shopIds[1], sender_role: 'seller', message: 'Bisa kak! Beli 2 diskon 10%, hubungi kami untuk kode promo.', ...ts },
+      { chat_id: chatIds[0], user_id: userIds[3], shop_id: shopIds[0], message: 'Halo, iPhone 15 Pro masih ready stok?', ...ts },
+      { chat_id: chatIds[1], user_id: userIds[3], shop_id: shopIds[0], message: 'Garansi berapa tahun kak?', ...ts },
+      { chat_id: chatIds[2], user_id: userIds[4], shop_id: shopIds[1], message: 'Dress floralnya ada ukuran XL tidak?', ...ts },
+      { chat_id: chatIds[3], user_id: userIds[4], shop_id: shopIds[1], message: 'Kalau beli 3 pcs bisa dapat diskon?', ...ts },
+      { chat_id: chatIds[4], user_id: userIds[3], shop_id: shopIds[1], message: 'Kemeja batik motif lainnya ada tidak selain parang?', ...ts },
     ]);
 
     // ── 17. Notifications ────────────────────────────────────────────────────
     await queryInterface.bulkInsert('Notifications', [
-      { notification_id: notifIds[0], user_id: userIds[5], subject: 'Pesanan Dikonfirmasi', message: 'Pesanan #001 Anda telah dikonfirmasi oleh penjual.', ...ts },
-      { notification_id: notifIds[1], user_id: userIds[5], subject: 'Pesanan Selesai', message: 'Pesanan JBL Flip 6 telah berhasil diterima. Terima kasih!', ...ts },
-      { notification_id: notifIds[2], user_id: userIds[5], subject: 'Promo Flash!', message: 'Gunakan kode FLASH100 untuk diskon Rp100.000 hari ini saja!', ...ts },
-      { notification_id: notifIds[3], user_id: userIds[5], subject: 'Selamat Datang!', message: 'Akun Anda berhasil dibuat. Mulai belanja sekarang di ShopTok!', ...ts },
-      { notification_id: notifIds[4], user_id: userIds[6], subject: 'Pesanan Dikonfirmasi', message: 'Pesanan Serum Vitamin C Anda sedang diproses oleh penjual.', ...ts },
-      { notification_id: notifIds[5], user_id: userIds[6], subject: 'Pesanan Selesai', message: 'Sunscreen SPF 50 telah diterima. Jangan lupa beri ulasan ya!', ...ts },
-      { notification_id: notifIds[6], user_id: userIds[6], subject: 'Voucher Baru!', message: 'Voucher LOYAL15 sudah tersedia di akun kamu. Segera gunakan!', ...ts },
-      { notification_id: notifIds[7], user_id: userIds[6], subject: 'Selamat Datang!', message: 'Hai Cantika, selamat bergabung di ShopTok. Belanja yuk!', ...ts },
+      { notification_id: notifIds[0], user_id: userIds[3], subject: 'Pesanan Dikonfirmasi', message: 'Pesanan Anda telah dikonfirmasi dan sedang diproses.', ...ts },
+      { notification_id: notifIds[1], user_id: userIds[3], subject: 'Pesanan Selesai', message: 'Pesanan Anda telah berhasil diterima. Terima kasih!', ...ts },
+      { notification_id: notifIds[2], user_id: userIds[4], subject: 'Pesanan Dikonfirmasi', message: 'Pesanan Anda telah dikonfirmasi dan sedang diproses.', ...ts },
+      { notification_id: notifIds[3], user_id: userIds[4], subject: 'Promo Hari Ini!', message: 'Gunakan kode FLASH50 untuk diskon Rp50.000 hari ini saja!', ...ts },
+      { notification_id: notifIds[4], user_id: userIds[3], subject: 'Selamat Datang!', message: 'Akun Anda berhasil dibuat. Mulai belanja sekarang!', ...ts },
     ]);
   },
 
   async down(queryInterface) {
+    // Delete in strict reverse-dependency order
     await queryInterface.bulkDelete('Notifications', null, {});
     await queryInterface.bulkDelete('Chats', null, {});
     await queryInterface.bulkDelete('Ratings', null, {});
@@ -350,6 +274,7 @@ module.exports = {
     await queryInterface.bulkDelete('Products', null, {});
     await queryInterface.bulkDelete('Vouchers', null, {});
     await queryInterface.bulkDelete('Shops', null, {});
+    // Clear address_id FK before deleting Addresses (circular dep)
     await queryInterface.bulkUpdate('Users', { address_id: null }, {});
     await queryInterface.bulkDelete('Addresses', null, {});
     await queryInterface.bulkDelete('Categories', null, {});
